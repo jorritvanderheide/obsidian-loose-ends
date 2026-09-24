@@ -1,0 +1,11 @@
+{
+	"id": "loose-ends",
+	"name": "Loose Ends",
+	"version": "1.0.0",
+	"minAppVersion": "1.13.0",
+	"description": "Capture notes without classifying them, then file them by tag and see what is still unfiled.",
+	"author": "Jorrit van der Heide",
+	"authorUrl": "https://github.com/jorritvanderheide",
+	"fundingUrl": "https://liberapay.com/BW20",
+	"isDesktopOnly": false
+}
