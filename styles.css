@@ -12,3 +12,10 @@
 .loose-ends-status.mod-problem {
 	color: var(--text-error);
 }
+
+/* A template's prompt, drawn on the empty line under its heading. */
+.loose-ends-prompt {
+	color: var(--text-faint);
+	font-style: italic;
+	pointer-events: none;
+}

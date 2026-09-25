@@ -51,7 +51,32 @@ export function strayTags(axis: Axis, tags: readonly string[]): string[] {
 	return tags.filter((tag) => tag.startsWith(prefix) && !known.has(tag));
 }
 
+/**
+ * What the picker asks for this axis, naming the stray tags under it.
+ *
+ * Asked is where a stray matters: a note tagged `domain/phd/wp1` looks
+ * answered to whoever tagged it, and this is the moment it is found not to be.
+ * Picking a value replaces the stray, so the question says so before it
+ * happens rather than after.
+ */
+export function questionFor(axis: Axis, tags: readonly string[]): string {
+	const asked = `Which ${axis.namespace}?`;
+	const strays = strayTags(axis, tags);
+	if (strays.length === 0) return asked;
+	const them = strays.length === 1 ? "isn't one of them" : "aren't among them";
+	return `${asked} ${strays.join(', ')} ${them}, and picking one replaces ${strays.length === 1 ? 'it' : 'them'}.`;
+}
+
 /** A namespace as it is stored: no `#`, no slashes, no surrounding space. */
 export function normaliseNamespace(raw: string): string {
 	return raw.trim().replace(/^#+/, '').replace(/\/+$/, '').replace(/\s+/g, '-');
+}
+
+/**
+ * A value as it is stored: no slash at either end, none doubled, no surrounding
+ * space. Inner slashes stay, because a nested value such as `phd/wp1` is one
+ * value like any other.
+ */
+export function normaliseValue(raw: string): string {
+	return raw.trim().replace(/\/{2,}/g, '/').replace(/^\/+|\/+$/g, '');
 }

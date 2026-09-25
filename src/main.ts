@@ -2,8 +2,12 @@ import { Notice, Plugin, TFile } from 'obsidian';
 import { addNote, writeStarterTemplate } from './commands/add-note';
 import { fileNote, setAxis } from './commands/file-note';
 import type { Context } from './context';
+import type { TemplatePrompts } from './core/prompts';
 import { loadSettings, type Settings } from './core/settings';
-import { syncMirror, sweepMirror } from './mirror';
+import { isTemplate } from './core/template';
+import { inScope, syncMirror, sweepMirror } from './mirror';
+import { templatePrompts } from './templates';
+import { ghosts, redrawGhosts } from './ui/ghost';
 import { LooseEndsSettingTab } from './ui/settings-tab';
 
 export default class LooseEndsPlugin extends Plugin {
@@ -17,6 +21,14 @@ export default class LooseEndsPlugin extends Plugin {
 	 * the same file.
 	 */
 	private writing = new Set<string>();
+	/**
+	 * What the templates ask, read again whenever one of them changes, so the
+	 * drawn prompts follow the template's current wording. Held here because the
+	 * editor draws synchronously and a file read is not.
+	 */
+	private prompts: TemplatePrompts[] = [];
+	/** The template folder `prompts` was read from, to notice it moving. */
+	private promptsFrom: string | null = null;
 
 	async onload(): Promise<void> {
 		const data: unknown = await this.loadData();
@@ -57,11 +69,40 @@ export default class LooseEndsPlugin extends Plugin {
 			}),
 		);
 
+		this.registerEditorExtension(
+			ghosts({
+				inScope: (path) => inScope(path, this.settings.notesFolder),
+				prompts: () => this.prompts,
+			}),
+		);
+
 		// The cache is not ready during onload, so the first sweep waits for it.
+		// So do the template listeners: the vault reports a create for every file
+		// while it loads, and each would read every template again.
 		this.app.workspace.onLayoutReady(() => {
 			void this.sweep(true);
+			void this.readPrompts();
+			const changed = (path: string) => {
+				if (isTemplate(path, this.settings.templateFolder)) void this.readPrompts();
+			};
+			this.registerEvent(this.app.vault.on('modify', (file) => changed(file.path)));
+			this.registerEvent(this.app.vault.on('create', (file) => changed(file.path)));
+			this.registerEvent(this.app.vault.on('delete', (file) => changed(file.path)));
+			this.registerEvent(
+				this.app.vault.on('rename', (file, old) => {
+					changed(file.path);
+					changed(old);
+				}),
+			);
 			if (data === null) void this.firstRun();
 		});
+	}
+
+	/** Read what every template asks, and draw the open notes again. */
+	private async readPrompts(): Promise<void> {
+		this.promptsFrom = this.settings.templateFolder;
+		this.prompts = await templatePrompts(this.app, this.settings.templateFolder);
+		redrawGhosts();
 	}
 
 	/** Once per vault: saving settings is what makes the next load not the first. */
@@ -97,5 +138,6 @@ export default class LooseEndsPlugin extends Plugin {
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+		if (this.settings.templateFolder !== this.promptsFrom) await this.readPrompts();
 	}
 }

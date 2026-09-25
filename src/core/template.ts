@@ -1,5 +1,7 @@
 // Filling a template in, which is two placeholders and deliberately no more.
 
+import { cleanFolder } from './note';
+
 /**
  * A template's text with the note's title in it.
  *
@@ -25,6 +27,17 @@ export function placeCursor(text: string): { text: string; fromEnd: number | nul
 	const at = text.search(CURSOR);
 	const clean = text.replace(CURSOR, '');
 	return { text: clean, fromEnd: at === -1 ? null : clean.length - at };
+}
+
+/**
+ * Whether a file is one of the templates on offer: a markdown file directly in
+ * the template folder. A change to one means the prompts drawn in notes are out
+ * of date.
+ */
+export function isTemplate(path: string, templateFolder: string): boolean {
+	const folder = cleanFolder(templateFolder);
+	if (folder === '' || !path.startsWith(`${folder}/`) || !path.endsWith('.md')) return false;
+	return !path.slice(folder.length + 1).includes('/');
 }
 
 /** The name a template file is offered under: its basename, without `.md`. */

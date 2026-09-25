@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isKnown, normaliseNamespace, strayTags, tagFor, valueOf, type Axis } from '../src/core/vocabulary';
+import { isKnown, normaliseNamespace, normaliseValue, questionFor, strayTags, tagFor, valueOf, type Axis } from '../src/core/vocabulary';
 
 const domain: Axis = { namespace: 'domain', values: ['phd', 'vault', 'personal'] };
 
@@ -44,6 +44,24 @@ describe('strayTags', () => {
 	});
 });
 
+describe('questionFor', () => {
+	it('asks plainly when nothing under the namespace is stray', () => {
+		expect(questionFor(domain, ['domain/phd', 'source/ai'])).toBe('Which domain?');
+	});
+
+	it('names a stray tag, and says picking replaces it', () => {
+		expect(questionFor(domain, ['domain/phd/wp1', 'source/ai'])).toBe(
+			"Which domain? domain/phd/wp1 isn't one of them, and picking one replaces it.",
+		);
+	});
+
+	it('names every stray tag', () => {
+		expect(questionFor(domain, ['domain/phd/wp1', 'domain/coding'])).toBe(
+			"Which domain? domain/phd/wp1, domain/coding aren't among them, and picking one replaces them.",
+		);
+	});
+});
+
 describe('tagFor and isKnown', () => {
 	it('joins a namespace and value', () => {
 		expect(tagFor('domain', 'phd')).toBe('domain/phd');
@@ -60,5 +78,16 @@ describe('normaliseNamespace', () => {
 	it('strips hashes, trailing slashes and spaces', () => {
 		expect(normaliseNamespace('  #domain/ ')).toBe('domain');
 		expect(normaliseNamespace('my topic')).toBe('my-topic');
+	});
+});
+
+describe('normaliseValue', () => {
+	it('keeps a nested value nested', () => {
+		expect(normaliseValue('phd/wp1')).toBe('phd/wp1');
+	});
+
+	it('strips slashes at either end and collapses doubled ones', () => {
+		expect(normaliseValue(' /phd//wp1/ ')).toBe('phd/wp1');
+		expect(normaliseValue('/')).toBe('');
 	});
 });

@@ -42,6 +42,14 @@ and the templates in your template folder are listed under it, the ones you
 picked most recently first. It asks nothing else. A template may carry the tags
 it is certain of, and the rest is left for later.
 
+A template can also ask something under each heading. Put an HTML comment right
+under a heading and it becomes that heading's prompt: **Add note** leaves it out
+of the note, and the editor draws it faintly on the empty line under the heading
+until you write there. It lives only in the template, so rewording it rewords
+every note, and nothing stays behind under what you wrote. A note gets the
+prompts of the template whose headings it has; a template with no heading
+besides its title cannot be recognised, so its prompts are never drawn.
+
 **File note** asks only what the open note is still missing, one axis at a time,
 in the order you configured them, offering the values you picked most recently
 first. Dismiss a question and what you already answered is kept: half an answer
@@ -60,7 +68,9 @@ worse than no default.
 ## Values are compared exactly
 
 `domain/phd/wp1` does not answer the `domain` axis, and neither does a bare
-`domain`. Only `domain/phd` does.
+`domain`. Only `domain/phd` does. When **File note** or **Set `<axis>`** asks
+about an axis, the question names any tag under it that is not one of its
+values, and picking a value replaces it. Nothing else touches it.
 
 This is deliberate and it is the bug this plugin was written after. Its
 predecessor compared with `startsWith`, so a nested tag passed validation while
@@ -76,7 +86,7 @@ answer per note, and material gets used more than once.
 | Setting | |
 | --- | --- |
 | **Notes folder** | Where a new note is made, and the only folder that ever gets the unfiled tag. Empty means the whole vault. Keeping it narrow is what stops the tag landing on notes another plugin owns, such as a literature folder, where every note would read as unfiled for ever. |
-| **Template folder** | Markdown files here are offered when a note is made. `{{title}}` becomes the name of the note, and the cursor starts at `{{cursor}}`. |
+| **Template folder** | Markdown files here are offered when a note is made. `{{title}}` becomes the name of the note, and the cursor starts at `{{cursor}}`. An HTML comment right under a heading is that heading's prompt, drawn in the note instead of copied into it. |
 | **Unfiled tag** | The tag written on a note that has not answered everything. Empty writes none, for a vault that would rather query than browse. |
 | **Axes** | What a note has to answer. A namespace and its values. The picker offers the values you picked most recently first, then the rest in the order given here. |
 

@@ -10,7 +10,7 @@
 // filing system before you can use one, which is what Dataview already is.
 
 import type { Axis } from './vocabulary';
-import { normaliseNamespace } from './vocabulary';
+import { normaliseNamespace, normaliseValue } from './vocabulary';
 
 /**
  * Stamped on every save, and bumped when a saved key is renamed or changes
@@ -69,7 +69,7 @@ export function readAxes(value: unknown): Axis[] {
 		const namespace = normaliseNamespace(asString(raw.namespace, ''));
 		if (namespace === '' || seen.has(namespace)) continue;
 		const values = Array.isArray(raw.values)
-			? raw.values.filter((v): v is string => typeof v === 'string').map((v) => v.trim()).filter((v) => v !== '')
+			? raw.values.filter((v): v is string => typeof v === 'string').map((v) => normaliseValue(v)).filter((v) => v !== '')
 			: [];
 		if (values.length === 0) continue;
 		seen.add(namespace);

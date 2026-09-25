@@ -1,6 +1,6 @@
 import { PluginSettingTab, type App, type SettingDefinitionItem } from 'obsidian';
 import type LooseEndsPlugin from '../main';
-import { normaliseNamespace } from '../core/vocabulary';
+import { normaliseNamespace, normaliseValue } from '../core/vocabulary';
 
 export class LooseEndsSettingTab extends PluginSettingTab {
 	constructor(
@@ -26,7 +26,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Template folder',
-				desc: 'Markdown files here are offered when a note is made. {{title}} becomes the name of the note, and the cursor starts at {{cursor}}.',
+				desc: 'Markdown files here are offered when a note is made. {{title}} becomes the name of the note, and the cursor starts at {{cursor}}. A comment right under a heading is drawn in the note as a prompt, not copied.',
 				control: { type: 'folder', key: 'templateFolder' },
 			},
 			{
@@ -37,7 +37,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			{
 				type: 'page',
 				name: 'Axes',
-				desc: 'What a note has to answer before it counts as filed. One tag namespace each, with the values it accepts. Values are compared exactly, so a nested tag never counts as an answer.',
+				desc: 'What a note has to answer before it counts as filed. One tag namespace each, with the values it accepts. Values are compared exactly, so a tag not in the list, nested or not, never counts as an answer.',
 				displayValue: () => countLabel(settings.axes.length),
 				items: [
 					{
@@ -71,7 +71,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 											.onChange(async (value) => {
 												axis.values = value
 													.split(',')
-													.map((entry) => entry.trim())
+													.map((entry) => normaliseValue(entry))
 													.filter((entry) => entry !== '');
 												await this.plugin.saveSettings();
 											}),

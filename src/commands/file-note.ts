@@ -9,7 +9,7 @@ import { missingAxes } from '../core/filing';
 import { byRecent, readRecent, rememberPick } from '../core/recent';
 import { readTags, withValue } from '../core/tags';
 import { cachedTags, editFrontmatter } from '../frontmatter';
-import type { Axis } from '../core/vocabulary';
+import { questionFor, type Axis } from '../core/vocabulary';
 import { activeNote, mirrorActive, syncMirror } from '../mirror';
 import { choose } from '../ui/choose';
 
@@ -28,7 +28,7 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 	const picked = await choose(
 		context.app,
 		byRecent(axis.values, (value) => value, recent).map((value) => ({ value, label: value })),
-		`Which ${axis.namespace}?`,
+		questionFor(axis, readTags(cachedTags(context.app, file))),
 	);
 	if (picked === null) return false;
 	context.app.saveLocalStorage(recentKey(axis), rememberPick(recent, picked, axis.values));

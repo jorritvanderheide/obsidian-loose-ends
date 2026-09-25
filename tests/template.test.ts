@@ -1,5 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { fillTemplate, placeCursor, STARTER_TEMPLATE, templateName } from '../src/core/template';
+import { fillTemplate, isTemplate, placeCursor, STARTER_TEMPLATE, templateName } from '../src/core/template';
+
+describe('isTemplate', () => {
+	it('is a markdown file directly in the template folder', () => {
+		expect(isTemplate('Templates/Notes/MOC.md', 'Templates/Notes')).toBe(true);
+		expect(isTemplate('Templates/Notes/MOC.md', 'Templates/Notes/')).toBe(true);
+	});
+
+	it('is not one in a subfolder, in another folder, or of another kind', () => {
+		expect(isTemplate('Templates/Notes/Old/MOC.md', 'Templates/Notes')).toBe(false);
+		expect(isTemplate('Templates/NotesExtra/MOC.md', 'Templates/Notes')).toBe(false);
+		expect(isTemplate('Notes/MOC.md', 'Templates/Notes')).toBe(false);
+		expect(isTemplate('Templates/Notes/Diagram.canvas', 'Templates/Notes')).toBe(false);
+	});
+
+	it('is nothing when there is no template folder', () => {
+		expect(isTemplate('MOC.md', '')).toBe(false);
+	});
+});
 
 describe('fillTemplate', () => {
 	it('puts the title in', () => {

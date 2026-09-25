@@ -3,12 +3,14 @@
 // Nothing is asked here but a name and a shape. A template may carry the tags
 // it is certain of, and whatever is still unanswered is what the mirror reports.
 
-import { MarkdownView, Notice, TFile, TFolder, normalizePath } from 'obsidian';
+import { MarkdownView, Notice, TFile, normalizePath } from 'obsidian';
 import type { Context } from '../context';
 import { cleanFolder, notePath } from '../core/note';
+import { withoutPrompts } from '../core/prompts';
 import { byRecent, readRecent, rememberPick } from '../core/recent';
 import { fillTemplate, placeCursor, STARTER_TEMPLATE, templateName } from '../core/template';
 import { syncMirror } from '../mirror';
+import { templateFiles } from '../templates';
 import { promptForNote } from '../ui/prompt';
 
 /**
@@ -30,17 +32,6 @@ const RECENT_KEY = 'loose-ends-recent-templates';
 /** A choice as the history knows it. No path is empty, so no template cannot collide with one. */
 function choiceKey(choice: Choice): string {
 	return choice.kind === 'none' ? '' : choice.file.path;
-}
-
-/** The templates on offer: every markdown file directly in the template folder. */
-function templates(context: Context): TFile[] {
-	const folder = cleanFolder(context.settings.templateFolder);
-	if (folder === '') return [];
-	const found = context.app.vault.getAbstractFileByPath(normalizePath(folder));
-	if (!(found instanceof TFolder)) return [];
-	return found.children
-		.filter((child): child is TFile => child instanceof TFile && child.extension === 'md')
-		.sort((a, b) => a.basename.localeCompare(b.basename));
 }
 
 async function ensureFolder(context: Context, folder: string): Promise<void> {
@@ -74,7 +65,10 @@ export async function addNote(context: Context): Promise<void> {
 	const choices = byRecent(
 		[
 			{ value: { kind: 'none' } as Choice, label: 'No template', description: 'An empty note' },
-			...templates(context).map((file) => ({ value: { kind: 'template' as const, file }, label: templateName(file.path) })),
+			...templateFiles(context.app, context.settings.templateFolder).map((file) => ({
+				value: { kind: 'template' as const, file },
+				label: templateName(file.path),
+			})),
 		],
 		(choice) => choiceKey(choice.value),
 		recent,
@@ -90,9 +84,11 @@ export async function addNote(context: Context): Promise<void> {
 	);
 
 	try {
+		// A template's prompts are drawn in the note, not copied into it: see
+		// `core/prompts.ts`.
 		const { text, fromEnd } = placeCursor(
 			picked.value.kind === 'template'
-				? fillTemplate(await context.app.vault.cachedRead(picked.value.file), picked.title)
+				? fillTemplate(withoutPrompts(await context.app.vault.cachedRead(picked.value.file)), picked.title)
 				: '',
 		);
 		await ensureFolder(context, folder);

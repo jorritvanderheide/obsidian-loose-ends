@@ -32,6 +32,12 @@ describe('readAxes', () => {
 		]);
 	});
 
+	it('reads a nested value cleaned, and drops one that was only slashes', () => {
+		expect(readAxes([{ namespace: 'domain', values: ['phd//wp1/', '/', 'phd/wp1'] }])).toEqual([
+			{ namespace: 'domain', values: ['phd/wp1'] },
+		]);
+	});
+
 	it('reads junk as no axes', () => {
 		expect(readAxes(undefined)).toEqual([]);
 		expect(readAxes('domain')).toEqual([]);
