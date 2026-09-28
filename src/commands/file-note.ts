@@ -6,6 +6,7 @@
 import { Notice, type TFile } from 'obsidian';
 import type { Context } from '../context';
 import { missingAxes } from '../core/filing';
+import { activeAxes } from '../core/settings';
 import { byRecent, readRecent, rememberPick } from '../core/recent';
 import { readTags, withValue } from '../core/tags';
 import { cachedTags, editFrontmatter } from '../frontmatter';
@@ -39,7 +40,7 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 }
 
 export async function fileNote(context: Context): Promise<void> {
-	if (context.settings.axes.length === 0) {
+	if (activeAxes(context.settings).length === 0) {
 		new Notice('Loose Ends has no axes yet. Add one in its settings to say what a note is filed by.');
 		return;
 	}
@@ -50,7 +51,7 @@ export async function fileNote(context: Context): Promise<void> {
 	}
 
 	const tags = readTags(cachedTags(context.app, file));
-	const missing = missingAxes(context.settings.axes, tags);
+	const missing = missingAxes(activeAxes(context.settings), tags);
 	if (missing.length === 0) {
 		new Notice('Already filed.');
 		return;
@@ -64,7 +65,7 @@ export async function fileNote(context: Context): Promise<void> {
 	await syncMirror(context.app, file, context.settings);
 
 	const left = missingAxes(
-		context.settings.axes,
+		activeAxes(context.settings),
 		readTags(cachedTags(context.app, file)),
 	);
 	if (left.length === 0 && mirrorActive(context.settings)) new Notice('Filed.');

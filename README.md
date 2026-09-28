@@ -58,8 +58,9 @@ is progress, and making you redo it would be the annoying half.
 **Set `<axis>`** changes one answer afterwards, whether or not it was already
 given. One command per axis, named after it.
 
-**Refresh tags** checks every note in your notes folder against the axes. Run it
-after changing the vocabulary, when notes that used to be filed may no longer be.
+**Refresh tags** checks every note in your notes folder against the axes. It
+runs by itself when you remove an axis, and when you close settings after
+changing them. An axis still missing its namespace or values does not count yet.
 
 None of them has a hotkey. Which keys you want is yours to decide, you already
 have bindings this plugin knows nothing about, and a default that collides is

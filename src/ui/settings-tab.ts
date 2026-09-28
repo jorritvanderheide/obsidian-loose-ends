@@ -52,7 +52,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 						},
 						onDelete: (index) => {
 							settings.axes.splice(index, 1);
-							void this.commit();
+							void this.commit().then(() => this.plugin.sweepIfAxesChanged());
 						},
 						items: settings.axes.map((axis, index) => ({
 							name: `Axis ${index + 1}`,
@@ -83,10 +83,19 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Refresh tags',
-				desc: 'Check every note in the notes folder against the axes. Run this after changing them.',
+				desc: 'Check every note in the notes folder against the axes. This runs by itself when an axis is removed, and when settings close after the axes changed.',
 				action: () => void this.plugin.sweep(),
 			},
 		];
+	}
+
+	/**
+	 * Adding an axis and typing its values out are sweeps waiting for the last
+	 * keystroke, so they wait for the tab to close instead.
+	 */
+	hide(): void {
+		super.hide();
+		void this.plugin.sweepIfAxesChanged();
 	}
 
 	async setControlValue(key: string, value: unknown): Promise<void> {

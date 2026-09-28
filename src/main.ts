@@ -3,7 +3,7 @@ import { addNote, writeStarterTemplate } from './commands/add-note';
 import { fileNote, setAxis } from './commands/file-note';
 import type { Context } from './context';
 import type { TemplatePrompts } from './core/prompts';
-import { loadSettings, type Settings } from './core/settings';
+import { activeAxes, loadSettings, type Settings } from './core/settings';
 import { isTemplate } from './core/template';
 import { inScope, syncMirror, sweepMirror } from './mirror';
 import { templatePrompts } from './templates';
@@ -29,6 +29,10 @@ export default class LooseEndsPlugin extends Plugin {
 	private prompts: TemplatePrompts[] = [];
 	/** The template folder `prompts` was read from, to notice it moving. */
 	private promptsFrom: string | null = null;
+	/** The namespaces a Set command is registered for. */
+	private axisCommands = new Set<string>();
+	/** The axes the last sweep checked against, to notice them changing. */
+	private sweptAxes: string | null = null;
 
 	async onload(): Promise<void> {
 		const data: unknown = await this.loadData();
@@ -53,15 +57,7 @@ export default class LooseEndsPlugin extends Plugin {
 			callback: () => void this.sweep(),
 		});
 
-		// One per axis, so a value can be changed without going through filing.
-		// Registered from settings, so they follow whatever the vocabulary is.
-		for (const axis of this.settings.axes) {
-			this.addCommand({
-				id: `set-${axis.namespace}`,
-				name: `Set ${axis.namespace}`,
-				callback: () => void setAxis(this.context(), axis),
-			});
-		}
+		this.syncAxisCommands();
 
 		this.registerEvent(
 			this.app.metadataCache.on('changed', (file) => {
@@ -129,8 +125,42 @@ export default class LooseEndsPlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * One Set command per axis, so a value can be changed without going through
+	 * filing. Added and removed as the axes change, so the palette never offers
+	 * an axis that is gone.
+	 */
+	private syncAxisCommands(): void {
+		const namespaces = new Set(activeAxes(this.settings).map((axis) => axis.namespace));
+		for (const namespace of this.axisCommands) {
+			if (namespaces.has(namespace)) continue;
+			this.removeCommand(`set-${namespace}`);
+			this.axisCommands.delete(namespace);
+		}
+		for (const namespace of namespaces) {
+			if (this.axisCommands.has(namespace)) continue;
+			this.addCommand({
+				id: `set-${namespace}`,
+				name: `Set ${namespace}`,
+				// Looked up when run, so it asks with the values as they are now.
+				callback: () => {
+					const axis = activeAxes(this.settings).find((entry) => entry.namespace === namespace);
+					if (axis) void setAxis(this.context(), axis);
+				},
+			});
+			this.axisCommands.add(namespace);
+		}
+	}
+
+	/** Sweep again if the axes changed since the last sweep. */
+	async sweepIfAxesChanged(): Promise<void> {
+		if (JSON.stringify(activeAxes(this.settings)) === this.sweptAxes) return;
+		await this.sweep();
+	}
+
 	/** Check every note in scope. `quiet` for the one on startup. */
 	async sweep(quiet = false): Promise<void> {
+		this.sweptAxes = JSON.stringify(activeAxes(this.settings));
 		const changed = await sweepMirror(this.app, this.settings);
 		if (quiet) return;
 		new Notice(changed === 0 ? 'Every note was already right.' : `Updated ${changed} note${changed === 1 ? '' : 's'}.`);
@@ -138,6 +168,7 @@ export default class LooseEndsPlugin extends Plugin {
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+		this.syncAxisCommands();
 		if (this.settings.templateFolder !== this.promptsFrom) await this.readPrompts();
 	}
 }

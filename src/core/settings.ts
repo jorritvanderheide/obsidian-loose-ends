@@ -89,3 +89,14 @@ export function loadSettings(data: unknown): Settings {
 		unfiledTag: asString(raw.unfiledTag, DEFAULT_SETTINGS.unfiledTag).replace(/^#+/, ''),
 	};
 }
+
+/**
+ * The axes in effect: the ones a reload would keep.
+ *
+ * The settings tab edits `axes` in place, so an axis being added sits in the
+ * list with no namespace or values until it is typed out. Read as it stands, it
+ * would make every note unfiled the moment "Add axis" was pressed.
+ */
+export function activeAxes(settings: Settings): Axis[] {
+	return readAxes(settings.axes);
+}

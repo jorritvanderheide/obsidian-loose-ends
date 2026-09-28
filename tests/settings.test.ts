@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, loadSettings, readAxes, SETTINGS_VERSION } from '../src/core/settings';
+import { activeAxes, DEFAULT_SETTINGS, loadSettings, readAxes, SETTINGS_VERSION } from '../src/core/settings';
 
 describe('readAxes', () => {
 	it('reads a well formed axis', () => {
@@ -42,6 +42,21 @@ describe('readAxes', () => {
 		expect(readAxes(undefined)).toEqual([]);
 		expect(readAxes('domain')).toEqual([]);
 		expect(readAxes([null, 3])).toEqual([]);
+	});
+});
+
+describe('activeAxes', () => {
+	// What "Add axis" leaves in the list until it is typed out.
+	it('leaves out an axis still being typed', () => {
+		const settings = {
+			...DEFAULT_SETTINGS,
+			axes: [
+				{ namespace: 'domain', values: ['phd'] },
+				{ namespace: '', values: [] },
+				{ namespace: 'source', values: [] },
+			],
+		};
+		expect(activeAxes(settings)).toEqual([{ namespace: 'domain', values: ['phd'] }]);
 	});
 });
 

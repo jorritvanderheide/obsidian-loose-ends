@@ -6,7 +6,7 @@
 import { TFile, type App } from 'obsidian';
 import { mirrorIsCurrent, withMirror } from './core/filing';
 import { cleanFolder } from './core/note';
-import type { Settings } from './core/settings';
+import { activeAxes, type Settings } from './core/settings';
 import { readTags } from './core/tags';
 import { cachedTags, editFrontmatter } from './frontmatter';
 
@@ -26,7 +26,7 @@ export function inScope(path: string, notesFolder: string): boolean {
 
 /** Whether the mirror is doing anything at all under these settings. */
 export function mirrorActive(settings: Settings): boolean {
-	return settings.unfiledTag !== '' && settings.axes.length > 0;
+	return settings.unfiledTag !== '' && activeAxes(settings).length > 0;
 }
 
 /**
@@ -38,14 +38,15 @@ export function mirrorActive(settings: Settings): boolean {
  */
 export async function syncMirror(app: App, file: TFile, settings: Settings): Promise<boolean> {
 	if (!mirrorActive(settings) || !inScope(file.path, settings.notesFolder)) return false;
+	const axes = activeAxes(settings);
 	const cached = readTags(cachedTags(app, file));
-	if (mirrorIsCurrent(settings.axes, cached, settings.unfiledTag)) return false;
+	if (mirrorIsCurrent(axes, cached, settings.unfiledTag)) return false;
 
 	let wrote = false;
 	await editFrontmatter(app, file, (frontmatter) => {
 		const tags = readTags(frontmatter.tags);
-		if (mirrorIsCurrent(settings.axes, tags, settings.unfiledTag)) return;
-		const next = withMirror(settings.axes, tags, settings.unfiledTag);
+		if (mirrorIsCurrent(axes, tags, settings.unfiledTag)) return;
+		const next = withMirror(axes, tags, settings.unfiledTag);
 		if (next.length === 0) delete frontmatter.tags;
 		else frontmatter.tags = next;
 		wrote = true;
