@@ -22,10 +22,22 @@ function widthOf(precision: string | undefined): number {
  * loading there.
  */
 const DATES_IN_NAMES: [number, RegExp][] = [
-	[10, /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/],
-	[7, /(?:^|[^\d-])(\d{4}-\d{2})(?![\d-])/],
-	[4, /(?:^|[^\d-])(\d{4})(?![\d-])/],
+	[10, /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/g],
+	[7, /(?:^|[^\d-])(\d{4}-\d{2})(?![\d-])/g],
+	[4, /(?:^|[^\d-])(\d{4})(?![\d-])/g],
 ];
+
+/**
+ * Whether something shaped like a date in a name is one: a month that exists,
+ * a day that month has, and, standing alone, four digits that read as a year
+ * rather than as a number, so `Top 1000 papers` keeps its thousand.
+ */
+function isDate(found: string): boolean {
+	const [year = 0, month, day] = found.split('-').map(Number);
+	if (month === undefined) return year >= 1900 && year < 2100;
+	if (month < 1 || month > 12) return false;
+	return day === undefined || (day >= 1 && day <= new Date(year, month, 0).getDate());
+}
 
 /**
  * A template's text with the note's title and date in it.
@@ -60,13 +72,15 @@ export function isoDate(day: Date): string {
  * The date a typed name already carries, or null: a whole `YYYY-MM-DD`, or,
  * when `width` allows it, a `YYYY-MM` or a `YYYY`. Only a name dated at that
  * precision is read that loosely, so `Budget 2026-10` names a month only where
- * a month is asked for.
+ * a month is asked for. One that is not a date, `2026-13`, is passed over.
  */
 export function dateIn(name: string, width = 10): string | null {
 	for (const [at, pattern] of DATES_IN_NAMES) {
 		if (at < width) break;
-		const found = pattern.exec(name)?.[1];
-		if (found !== undefined) return found;
+		for (const match of name.matchAll(pattern)) {
+			const found = match[1];
+			if (found !== undefined && isDate(found)) return found;
+		}
 	}
 	return null;
 }

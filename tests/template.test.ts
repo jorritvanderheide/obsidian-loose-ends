@@ -210,6 +210,27 @@ describe('{{date}} with a precision', () => {
 	});
 });
 
+describe('dateIn, only for a date that is one', () => {
+	it('passes over a month or day that does not exist', () => {
+		expect(dateIn('Month 2026-13', 7)).toBeNull();
+		expect(dateIn('Hanna 2026-02-30')).toBeNull();
+		expect(dateIn('Hanna 2028-02-29')).toBe('2028-02-29');
+	});
+
+	it('passes over a number that is not a year', () => {
+		expect(dateIn('Top 1000 papers', 4)).toBeNull();
+		expect(dateIn('ISO 9001 audit', 4)).toBeNull();
+		expect(makeNote('# {{title}} {{date:YYYY}}\n', 'Top 1000 papers', '2026-09-30').name).toBe(
+			'Top 1000 papers 2026',
+		);
+	});
+
+	it('keeps looking past one that is not', () => {
+		expect(dateIn('Top 1000 papers 2027', 4)).toBe('2027');
+		expect(dateIn('Room 2026-13 Month 2026-10', 7)).toBe('2026-10');
+	});
+});
+
 describe('dateIn, at the start of a name', () => {
 	it('finds a date that opens the name, as well as one after a space', () => {
 		expect(dateIn('2026-10-07')).toBe('2026-10-07');
