@@ -62,9 +62,25 @@ given. One command per axis, named after it.
 runs by itself when you remove an axis, and when you close settings after
 changing them. An axis still missing its namespace or values does not count yet.
 
-None of them has a hotkey. Which keys you want is yours to decide, you already
-have bindings this plugin knows nothing about, and a default that collides is
-worse than no default.
+A block shows the inbox on any note of your own:
+
+````
+```loose-ends
+```
+````
+
+**Unfiled** lists every note in the notes folder still missing an answer,
+newest first, with what it is missing in the tooltip. Click a row to open the
+note in a new tab, press the tag at its end to file it where it is, or
+right-click it to file it or set one axis. **Recently filed**, under it and
+shut until you open it, lists in grey the notes filed in the last seven days.
+When a note was filed is the one thing no tag says, so it is kept on this
+device only, and a note filed by changing the axes rather than its tags does
+not count.
+
+None of the commands has a hotkey. Which keys you want is yours to decide, you
+already have bindings this plugin knows nothing about, and a default that
+collides is worse than no default.
 
 ## Values are compared exactly
 

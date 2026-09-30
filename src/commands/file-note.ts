@@ -23,13 +23,20 @@ function recentKey(axis: Axis): string {
 	return `loose-ends-recent-axis-${axis.namespace}`;
 }
 
-/** Ask for one axis, and write it. Returns false when the question was dismissed. */
+/**
+ * Ask for one axis, and write it. Returns false when the question was dismissed.
+ *
+ * The question names the note when it is not the one open, because filing from
+ * the inbox block asks about a note you cannot see, and a mis-click would
+ * otherwise file the wrong one without a sign.
+ */
 async function answer(context: Context, file: TFile, axis: Axis): Promise<boolean> {
+	const question = questionFor(axis, readTags(cachedTags(context.app, file)));
 	const recent = readRecent(context.app.loadLocalStorage(recentKey(axis)));
 	const picked = await choose(
 		context.app,
 		byRecent(axis.values, (value) => value, recent).map((value) => ({ value, label: value })),
-		questionFor(axis, readTags(cachedTags(context.app, file))),
+		context.app.workspace.getActiveFile() === file ? question : `${file.basename} · ${question}`,
 	);
 	if (picked === null) return false;
 	context.app.saveLocalStorage(recentKey(axis), rememberPick(recent, picked, axis.values));
@@ -39,12 +46,13 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 	return true;
 }
 
-export async function fileNote(context: Context): Promise<void> {
+/** File a note: the one given, or the one open. */
+export async function fileNote(context: Context, target?: TFile): Promise<void> {
 	if (activeAxes(context.settings).length === 0) {
 		new Notice('Loose Ends has no axes yet. Add one in its settings to say what a note is filed by.');
 		return;
 	}
-	const file = activeNote(context.app, context.settings);
+	const file = target ?? activeNote(context.app, context.settings);
 	if (file === null) {
 		new Notice('Loose Ends only files notes in its notes folder.');
 		return;
@@ -71,9 +79,9 @@ export async function fileNote(context: Context): Promise<void> {
 	if (left.length === 0 && mirrorActive(context.settings)) new Notice('Filed.');
 }
 
-/** Change one axis on the open note, whether or not it was already answered. */
-export async function setAxis(context: Context, axis: Axis): Promise<void> {
-	const file = activeNote(context.app, context.settings);
+/** Change one axis on a note, the one given or the one open, whether or not it was already answered. */
+export async function setAxis(context: Context, axis: Axis, target?: TFile): Promise<void> {
+	const file = target ?? activeNote(context.app, context.settings);
 	if (file === null) {
 		new Notice('Loose Ends only files notes in its notes folder.');
 		return;

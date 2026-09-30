@@ -5,9 +5,11 @@ import type { Context } from './context';
 import type { TemplatePrompts } from './core/prompts';
 import { activeAxes, loadSettings, type Settings } from './core/settings';
 import { isTemplate } from './core/template';
+import { announceInboxChange, FilingWatch } from './inbox';
 import { inScope, syncMirror, sweepMirror } from './mirror';
 import { templatePrompts } from './templates';
 import { ghosts, redrawGhosts } from './ui/ghost';
+import { INBOX_BLOCK, InboxBlock } from './ui/inbox-block';
 import { LooseEndsSettingTab } from './ui/settings-tab';
 
 export default class LooseEndsPlugin extends Plugin {
@@ -33,6 +35,8 @@ export default class LooseEndsPlugin extends Plugin {
 	private axisCommands = new Set<string>();
 	/** The axes the last sweep checked against, to notice them changing. */
 	private sweptAxes: string | null = null;
+	/** When a note went from unfiled to filed, for the inbox block's Recently filed. */
+	private watch = new FilingWatch(this.app, () => this.settings);
 
 	async onload(): Promise<void> {
 		const data: unknown = await this.loadData();
@@ -59,8 +63,13 @@ export default class LooseEndsPlugin extends Plugin {
 
 		this.syncAxisCommands();
 
+		this.registerMarkdownCodeBlockProcessor(INBOX_BLOCK, (_source, el, ctx) => {
+			ctx.addChild(new InboxBlock(el, this.context(), ctx.sourcePath));
+		});
+
 		this.registerEvent(
 			this.app.metadataCache.on('changed', (file) => {
+				this.watch.noteChanged(file);
 				void this.onNoteChanged(file);
 			}),
 		);
@@ -83,11 +92,17 @@ export default class LooseEndsPlugin extends Plugin {
 			};
 			this.registerEvent(this.app.vault.on('modify', (file) => changed(file.path)));
 			this.registerEvent(this.app.vault.on('create', (file) => changed(file.path)));
-			this.registerEvent(this.app.vault.on('delete', (file) => changed(file.path)));
+			this.registerEvent(
+				this.app.vault.on('delete', (file) => {
+					changed(file.path);
+					this.watch.deleted(file.path);
+				}),
+			);
 			this.registerEvent(
 				this.app.vault.on('rename', (file, old) => {
 					changed(file.path);
 					changed(old);
+					if (file instanceof TFile) this.watch.renamed(file, old);
 				}),
 			);
 			if (data === null) void this.firstRun();
@@ -161,6 +176,9 @@ export default class LooseEndsPlugin extends Plugin {
 	/** Check every note in scope. `quiet` for the one on startup. */
 	async sweep(quiet = false): Promise<void> {
 		this.sweptAxes = JSON.stringify(activeAxes(this.settings));
+		// The axes may have filed or unfiled notes by the dozen, and none of that
+		// is somebody filing a note, so the watch starts again from here.
+		this.watch.reset();
 		const changed = await sweepMirror(this.app, this.settings);
 		if (quiet) return;
 		new Notice(changed === 0 ? 'Every note was already right.' : `Updated ${changed} note${changed === 1 ? '' : 's'}.`);
@@ -169,6 +187,7 @@ export default class LooseEndsPlugin extends Plugin {
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 		this.syncAxisCommands();
+		announceInboxChange(this.app);
 		if (this.settings.templateFolder !== this.promptsFrom) await this.readPrompts();
 	}
 }

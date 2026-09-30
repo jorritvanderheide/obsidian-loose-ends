@@ -19,3 +19,69 @@
 	font-style: italic;
 	pointer-events: none;
 }
+
+/*
+ * The inbox block. It is a nav tree in markup, the way Paper Trail's reading
+ * list is, so the theme styles both alike and nothing here sets a font size.
+ * What is left is what Obsidian's nav does not already do.
+ */
+.loose-ends-inbox .loose-ends-tree {
+	padding-bottom: var(--size-4-1);
+}
+
+/*
+ * Centred on the row rather than on the text's baseline, and as tall as the
+ * row: the button keeps its padding and takes it back as negative margin, so
+ * it is easy to hit without making the row taller.
+ */
+.loose-ends-actions {
+	display: flex;
+	align-self: center;
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}
+
+.loose-ends-actions .clickable-icon {
+	--icon-size: var(--icon-s);
+	padding-block: var(--size-4-1);
+	margin-block: calc(-1 * var(--size-4-1));
+	opacity: 0;
+}
+
+/* Quiet until the row is pointed at or focused, so the list reads as titles. */
+.loose-ends-inbox .nav-file-title:hover .clickable-icon,
+.loose-ends-inbox .nav-file-title:focus-within .clickable-icon,
+.loose-ends-actions .clickable-icon:focus-visible {
+	opacity: 1;
+}
+
+/* A touch screen has no hover, so nothing would ever appear. */
+@media (hover: none) {
+	.loose-ends-actions .clickable-icon {
+		opacity: 1;
+	}
+}
+
+.loose-ends-more .tree-item-inner {
+	color: var(--text-faint);
+}
+
+/*
+ * A section with nothing in it keeps its place, faint, so the block has the
+ * same shape every time. The count is held down too: Obsidian brightens it on
+ * hover, and a zero that lights up looks like something to open.
+ */
+.loose-ends-empty .tree-item-inner,
+.loose-ends-empty .loose-ends-section-icon,
+.loose-ends-empty .tree-item-self:hover .tree-item-flair {
+	color: var(--text-faint);
+}
+
+/*
+ * Filed notes are done with, so they are greyed, except the one you have open
+ * or are pointing at. Muted, not faint: faint is what an empty section wears,
+ * and a row that can still be opened should not look like one that cannot.
+ */
+.loose-ends-recent .nav-file-title:not(.is-active):not(:hover) .tree-item-inner {
+	color: var(--text-muted);
+}
