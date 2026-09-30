@@ -27,6 +27,11 @@ export interface Settings {
 	notesFolder: string;
 	/** Where the templates offered on create are read from. */
 	templateFolder: string;
+	/**
+	 * Whether the template picked last is offered first. Off offers the starter
+	 * template first, for a vault where one template is the usual answer.
+	 */
+	rememberTemplate: boolean;
 	/** The axes a note must answer before it counts as filed. */
 	axes: Axis[];
 	/**
@@ -44,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	version: SETTINGS_VERSION,
 	notesFolder: '',
 	templateFolder: 'Templates',
+	rememberTemplate: true,
 	axes: [],
 	unfiledTag: '',
 };
@@ -85,6 +91,8 @@ export function loadSettings(data: unknown): Settings {
 		version: SETTINGS_VERSION,
 		notesFolder: asString(raw.notesFolder, DEFAULT_SETTINGS.notesFolder),
 		templateFolder: asString(raw.templateFolder, DEFAULT_SETTINGS.templateFolder),
+		rememberTemplate:
+			typeof raw.rememberTemplate === 'boolean' ? raw.rememberTemplate : DEFAULT_SETTINGS.rememberTemplate,
 		axes: readAxes(raw.axes),
 		unfiledTag: asString(raw.unfiledTag, DEFAULT_SETTINGS.unfiledTag).replace(/^#+/, ''),
 	};

@@ -88,6 +88,7 @@ answer per note, and material gets used more than once.
 | --- | --- |
 | **Notes folder** | Where a new note is made, and the only folder that ever gets the unfiled tag. Empty means the whole vault. Keeping it narrow is what stops the tag landing on notes another plugin owns, such as a literature folder, where every note would read as unfiled for ever. |
 | **Template folder** | Markdown files here are offered when a note is made. `{{title}}` becomes the name of the note, and the cursor starts at `{{cursor}}`. An HTML comment right under a heading is that heading's prompt, drawn in the note instead of copied into it. |
+| **Remember the last template** | On, the template you picked last is offered first. Off, `Default` is offered first and the rest by name, for a vault where one template is the usual answer. |
 | **Unfiled tag** | The tag written on a note that has not answered everything. Empty writes none, for a vault that would rather query than browse. |
 | **Axes** | What a note has to answer. A namespace and its values. The picker offers the values you picked most recently first, then the rest in the order given here. |
 

@@ -30,6 +30,11 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 				control: { type: 'folder', key: 'templateFolder' },
 			},
 			{
+				name: 'Remember the last template',
+				desc: 'Offer the template picked last first. Off offers Default first, then the rest by name.',
+				control: { type: 'toggle', key: 'rememberTemplate' },
+			},
+			{
 				name: 'Unfiled tag',
 				desc: 'Written on a note that has not answered every axis, and taken off when it has. It is what gives a tag tree a folder of them. Empty writes none.',
 				control: { type: 'text', key: 'unfiledTag', placeholder: 'status/unfiled' },
@@ -103,6 +108,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 		const settings = this.plugin.settings;
 		if (key === 'notesFolder') settings.notesFolder = text;
 		else if (key === 'templateFolder') settings.templateFolder = text;
+		else if (key === 'rememberTemplate') settings.rememberTemplate = value === true;
 		else if (key === 'unfiledTag') settings.unfiledTag = text.replace(/^#+/, '');
 		await this.plugin.saveSettings();
 	}

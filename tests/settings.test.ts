@@ -78,4 +78,10 @@ describe('loadSettings', () => {
 		expect(saved.notesFolder).toBe('Notes');
 		expect(saved.templateFolder).toBe('T');
 	});
+
+	it('remembers the last template unless told not to', () => {
+		expect(loadSettings({}).rememberTemplate).toBe(true);
+		expect(loadSettings({ rememberTemplate: 'no' }).rememberTemplate).toBe(true);
+		expect(loadSettings({ rememberTemplate: false }).rememberTemplate).toBe(false);
+	});
 });

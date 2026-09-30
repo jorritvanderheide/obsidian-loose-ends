@@ -65,6 +65,10 @@ export async function addNote(context: Context): Promise<void> {
 	const exists = (path: string) => context.app.vault.getAbstractFileByPath(path) !== null;
 
 	const recent = readRecent(context.app.loadLocalStorage(RECENT_KEY));
+	// Not remembering still puts one first: the starter, when it is there.
+	const order = context.settings.rememberTemplate
+		? recent
+		: [notePath(cleanFolder(context.settings.templateFolder), STARTER_TEMPLATE.name)];
 	const templates: Offer[] = templateFiles(context.app, context.settings.templateFolder).map((file) => ({
 		value: { kind: 'template', file },
 		label: templateName(file.path),
@@ -74,7 +78,7 @@ export async function addNote(context: Context): Promise<void> {
 	const choices = byRecent(
 		templates.length > 0 ? templates : [{ value: { kind: 'none' }, label: 'No template', description: 'An empty note' }],
 		(choice) => choiceKey(choice.value),
-		recent,
+		order,
 	);
 
 	// Dismissing the prompt cancels the note. Nothing has been written yet, so
