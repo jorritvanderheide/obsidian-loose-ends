@@ -172,6 +172,44 @@ describe('names with $ in them', () => {
 	});
 });
 
+describe('{{date}} with a precision', () => {
+	const month = '---\ntags:\n  - type/record\n---\n\n# {{title}} {{date:YYYY-MM}}\n\n{{cursor}}\n';
+
+	it('cuts the same date short, whatever the case and spacing', () => {
+		expect(fillTemplate('{{date:YYYY-MM}} {{ date : yyyy }} {{date:YYYY-MM-DD}} {{date}}', 'X', '2026-09-30')).toBe(
+			'2026-09 2026 2026-09-30 2026-09-30',
+		);
+	});
+
+	it('leaves anything else after the colon as it stands', () => {
+		expect(fillTemplate('{{date:DD-MM-YYYY}} {{date:}}', 'X', '2026-09-30')).toBe('{{date:DD-MM-YYYY}} {{date:}}');
+	});
+
+	it('never writes more of the date than there is', () => {
+		expect(fillTemplate('{{date}} {{date:YYYY}}', 'X', '2026-10')).toBe('2026-10 2026');
+	});
+
+	it('dates the name to the month', () => {
+		expect(datesName(month)).toBe(true);
+		const note = makeNote(month, 'Month', '2026-09-30');
+		expect(note.name).toBe('Month 2026-09');
+		expect(note.text).toContain('# Month 2026-09\n');
+	});
+
+	it('takes a typed month, or a typed day cut to its month, instead of today', () => {
+		expect(makeNote(month, 'Month 2026-10', '2026-11-02').name).toBe('Month 2026-10');
+		expect(makeNote(month, 'Month 2026-10-31', '2026-11-02').name).toBe('Month 2026-10');
+	});
+
+	it('reads a typed month only where the heading asks for one', () => {
+		expect(dateIn('Budget 2026-10')).toBeNull();
+		expect(dateIn('Budget 2026-10', 7)).toBe('2026-10');
+		expect(dateIn('Paper DIS 2027', 7)).toBeNull();
+		expect(dateIn('Paper DIS 2027', 4)).toBe('2027');
+		expect(makeNote('# {{title}} {{date}}\n', 'Budget 2026-10', '2026-09-30').name).toBe('Budget 2026-10 2026-09-30');
+	});
+});
+
 describe('dateIn, at the start of a name', () => {
 	it('finds a date that opens the name, as well as one after a space', () => {
 		expect(dateIn('2026-10-07')).toBe('2026-10-07');

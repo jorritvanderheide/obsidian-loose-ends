@@ -4,13 +4,28 @@ import { cleanFolder } from './note';
 import { titleHeading } from './prompts';
 
 const TITLE = /\{\{\s*title\s*\}\}/gi;
-const DATE = /\{\{\s*date\s*\}\}/gi;
 /**
- * A date as `{{date}}` writes it, standing on its own in a name: the first
- * group. Matched with a group rather than a lookbehind, which older iOS cannot
- * parse, and one regex it cannot parse stops the whole plugin loading there.
+ * `{{date}}`, or `{{date:YYYY-MM}}` and `{{date:YYYY}}` for the same date cut
+ * short. The first group is the precision, when one was given.
  */
-const ISO_DATE = /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/;
+const DATE = /\{\{\s*date\s*(?::\s*(YYYY(?:-MM(?:-DD)?)?)\s*)?\}\}/gi;
+
+/** How many characters of `YYYY-MM-DD` a precision keeps: all of it without one. */
+function widthOf(precision: string | undefined): number {
+	return precision === undefined ? 10 : precision.length;
+}
+
+/**
+ * A date at each precision, most precise first, standing on its own in a
+ * name: the first group. Matched with a group rather than a lookbehind, which
+ * older iOS cannot parse, and one regex it cannot parse stops the whole plugin
+ * loading there.
+ */
+const DATES_IN_NAMES: [number, RegExp][] = [
+	[10, /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/],
+	[7, /(?:^|[^\d-])(\d{4}-\d{2})(?![\d-])/],
+	[4, /(?:^|[^\d-])(\d{4})(?![\d-])/],
+];
 
 /**
  * A template's text with the note's title and date in it.
@@ -20,13 +35,19 @@ const ISO_DATE = /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/;
  * thing to learn and the rest of a template is markdown that is already being
  * written. `{{date}}` is there because a note about something that happened is
  * named after the day it happened, and typing that day on every meeting is the
- * kind of chore a template is for. It takes no format: one date, written the
- * way that sorts. A template naming none of them is used as it stands.
+ * kind of chore a template is for. It takes a precision, not a format:
+ * `{{date:YYYY-MM}}` for a note about a month, `{{date:YYYY}}` for a year,
+ * each the same date cut short, so it still sorts. Anything else after the
+ * colon is not a placeholder and is left as it stands, like a template naming
+ * none of them. A placeholder never gets more of the date than there is: a
+ * month typed in a name fills `{{date}}` with that month.
  */
 export function fillTemplate(template: string, title: string, date: string): string {
 	// Functions, not strings, as the replacement: a string would read `$&` or
 	// `$'` in a typed name as a pattern and write something else.
-	return template.replace(TITLE, () => title).replace(DATE, () => date);
+	return template
+		.replace(TITLE, () => title)
+		.replace(DATE, (_match, precision: string | undefined) => date.slice(0, widthOf(precision)));
 }
 
 /** A day as `{{date}}` writes it, `YYYY-MM-DD`, in local time. */
@@ -35,9 +56,31 @@ export function isoDate(day: Date): string {
 	return `${day.getFullYear()}-${pad(day.getMonth() + 1)}-${pad(day.getDate())}`;
 }
 
-/** The `YYYY-MM-DD` date a typed name already carries, or null. */
-export function dateIn(name: string): string | null {
-	return ISO_DATE.exec(name)?.[1] ?? null;
+/**
+ * The date a typed name already carries, or null: a whole `YYYY-MM-DD`, or,
+ * when `width` allows it, a `YYYY-MM` or a `YYYY`. Only a name dated at that
+ * precision is read that loosely, so `Budget 2026-10` names a month only where
+ * a month is asked for.
+ */
+export function dateIn(name: string, width = 10): string | null {
+	for (const [at, pattern] of DATES_IN_NAMES) {
+		if (at < width) break;
+		const found = pattern.exec(name)?.[1];
+		if (found !== undefined) return found;
+	}
+	return null;
+}
+
+/**
+ * How much of the date a template puts in the name of the notes made from it,
+ * as a width of `YYYY-MM-DD`, or null when it puts none. It does by carrying a
+ * date placeholder in its title heading, and the first one there counts.
+ */
+function nameDateWidth(template: string): number | null {
+	const heading = titleHeading(template);
+	if (heading === null) return null;
+	const found = new RegExp(DATE.source, 'i').exec(heading);
+	return found === null ? null : widthOf(found[1]);
 }
 
 /**
@@ -45,8 +88,7 @@ export function dateIn(name: string): string | null {
  * which it does by carrying `{{date}}` in its title heading.
  */
 export function datesName(template: string): boolean {
-	const heading = titleHeading(template);
-	return heading !== null && new RegExp(DATE.source, 'i').test(heading);
+	return nameDateWidth(template) !== null;
 }
 
 /**
@@ -58,13 +100,16 @@ export function datesName(template: string): boolean {
  * `Hanna` make `Hanna 2026-09-30`, and the name and the heading agree. A date
  * typed in the name is the note's date instead of today's, taken out of the
  * title so it isn't written twice: `Hanna 2026-10-07` stays that, for a meeting
- * prepared before the day. Everywhere else `{{date}}` is that same date.
+ * prepared before the day. A heading dated to the month, `{{date:YYYY-MM}}`,
+ * also takes a typed `YYYY-MM`, for a month written up after it ended.
+ * Everywhere else `{{date}}` is that same date.
  */
 export function makeNote(template: string, typed: string, today: string): { name: string; text: string } {
 	const name = typed.trim();
-	const typedDate = dateIn(name);
+	const width = nameDateWidth(template);
+	const typedDate = dateIn(name, width ?? 10);
 	const date = typedDate ?? today;
-	const heading = datesName(template) ? titleHeading(template) : null;
+	const heading = width === null ? null : titleHeading(template);
 	const title =
 		heading !== null && typedDate !== null ? name.replace(typedDate, () => '').replace(/\s+/g, ' ').trim() : name;
 	return {
