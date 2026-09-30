@@ -121,12 +121,24 @@ export function readPrompts(template: string): TemplatePrompts {
 	return { title, sections };
 }
 
+/** Whether nothing but blank lines comes after line `at` before the next heading or the end. */
+function onlyBlanksAfter(lines: readonly string[], at: number): boolean {
+	for (const line of lines.slice(at + 1)) {
+		if (HEADING.test(line)) return true;
+		if (line.trim() !== '') return false;
+	}
+	return true;
+}
+
 /**
  * The template with its prompts taken out, to make a note from.
  *
- * Where a prompt sat between two blank lines, one of them goes with it, so the
- * note keeps the single blank line under the heading that the prompt is drawn
- * on. Every other comment is kept.
+ * A prompt that is all its section holds leaves an empty line where it was,
+ * so the note has a line of its own to draw the prompt on, with a blank line
+ * above and below it like any paragraph: the section looks the same before
+ * and after it is written in. A prompt with something under it, such as
+ * `{{cursor}}`, gives its place to that instead: where it sat between two
+ * blank lines, one of them goes with it. Every other comment is kept.
  */
 export function withoutPrompts(template: string): string {
 	const lines = template.split('\n');
@@ -136,6 +148,10 @@ export function withoutPrompts(template: string): string {
 
 	// From the bottom up, so the line numbers of the ones still to go hold.
 	for (const { start, end } of prompts.reverse()) {
+		if (onlyBlanksAfter(lines, end)) {
+			lines.splice(start, end - start + 1, '');
+			continue;
+		}
 		const blankBefore = lines[start - 1]?.trim() === '';
 		lines.splice(start, end - start + 1);
 		if (blankBefore && lines[start]?.trim() === '') lines.splice(start, 1);

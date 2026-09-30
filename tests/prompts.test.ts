@@ -95,7 +95,7 @@ describe('readPrompts', () => {
 });
 
 describe('withoutPrompts', () => {
-	it('takes the prompts out and keeps one blank line under each heading', () => {
+	it('takes the prompts out, giving an empty section a line of its own between blank lines', () => {
 		expect(withoutPrompts(DEFINITION)).toBe(
 			[
 				'---',
@@ -112,10 +112,18 @@ describe('withoutPrompts', () => {
 				'',
 				'## In de literatuur',
 				'',
+				'',
+				'',
 				'## Verwant',
+				'',
+				'',
 				'',
 			].join('\n'),
 		);
+	});
+
+	it('leaves an empty section looking like a written one: heading, blank, the prompt line, blank', () => {
+		expect(withoutPrompts(['## A', '', '<!-- vraag -->', '', '## B', ''].join('\n'))).toBe('## A\n\n\n\n## B\n');
 	});
 
 	it('keeps a blank line when the prompt sat right under its heading', () => {
@@ -136,15 +144,15 @@ describe('ghostsFor', () => {
 		expect(note.split('\n')[10]).toBe('');
 		expect(ghostsFor(note, templates)).toEqual([
 			{ line: 10, text: 'Jouw werkdefinitie, in je eigen woorden. Herschrijf hem als hij scherper wordt.' },
-			{ line: 13, text: 'Eén regel per bron.' },
-			{ line: 15, text: 'Begrippen die hiermee samenhangen.' },
+			{ line: 14, text: 'Eén regel per bron.' },
+			{ line: 18, text: 'Begrippen die hiermee samenhangen.' },
 		]);
 	});
 
 	it('finds the title heading by its level, whatever the note is called', () => {
 		expect(ghostsFor(made(MOC, 'Onderzoeksvragen'), templates)).toEqual([
 			{ line: 7, text: 'Waarom deze notities bij elkaar horen, in één alinea.' },
-			{ line: 10, text: 'Eén regel per link. - [[notitie]] wat deze bijdraagt' },
+			{ line: 11, text: 'Eén regel per link. - [[notitie]] wat deze bijdraagt' },
 		]);
 	});
 
