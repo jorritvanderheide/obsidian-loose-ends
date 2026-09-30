@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ghostsFor, readPrompts, withoutPrompts } from '../src/core/prompts';
+import { ghostsFor, readPrompts, titleHeading, withoutPrompts } from '../src/core/prompts';
 import { fillTemplate, placeCursor } from '../src/core/template';
 
 const DEFINITION = [
@@ -53,7 +53,7 @@ const QUESTION = ['# {{title}}?', '', '## Antwoord nu', '', '<!-- Je huidige ant
 
 /** A note as Add note makes it from a template. */
 function made(template: string, title: string): string {
-	return placeCursor(fillTemplate(withoutPrompts(template), title)).text;
+	return placeCursor(fillTemplate(withoutPrompts(template), title, '2026-09-30')).text;
 }
 
 describe('readPrompts', () => {
@@ -181,5 +181,16 @@ describe('ghostsFor', () => {
 
 	it('draws nothing where a heading has no empty line under it', () => {
 		expect(ghostsFor(['# X', '## Notities'].join('\n'), templates)).toEqual([]);
+	});
+});
+
+describe('titleHeading', () => {
+	it('is the text of the first heading carrying {{title}}', () => {
+		expect(titleHeading('# Intro\n\n# {{title}} {{date}}\n\n## Notes\n')).toBe('{{title}} {{date}}');
+	});
+
+	it('is null without one, and skips frontmatter', () => {
+		expect(titleHeading('# Intro\n')).toBeNull();
+		expect(titleHeading('---\n# {{title}}: x\n---\n')).toBeNull();
 	});
 });

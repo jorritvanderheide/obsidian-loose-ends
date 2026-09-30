@@ -7,7 +7,7 @@
 // create fail and handing back a prompt with the typed name gone.
 
 import { SuggestModal, type App } from 'obsidian';
-import { notePath, titleMessage, titleProblem } from '../core/note';
+import { notePath, titleMessage, titleProblem, type TitleProblem } from '../core/note';
 import type { Choice } from './choose';
 
 export interface NewNote<T> {
@@ -23,6 +23,7 @@ class NotePrompt<T> extends SuggestModal<Choice<T>> {
 		private readonly folder: string,
 		private readonly exists: (path: string) => boolean,
 		private readonly choices: Choice<T>[],
+		private readonly nameFor: (typed: string, value: T) => string,
 		private readonly done: (note: NewNote<T> | null) => void,
 	) {
 		super(app);
@@ -70,9 +71,28 @@ class NotePrompt<T> extends SuggestModal<Choice<T>> {
 		}
 	}
 
+	/**
+	 * A pick is checked against the name the note will really get, which a
+	 * template that dates the name makes longer than what was typed. An empty
+	 * field is still refused as empty, or a dated template would make a note
+	 * named only after the day.
+	 */
 	selectSuggestion(choice: Choice<T>, evt: MouseEvent | KeyboardEvent): void {
-		if (titleProblem(this.inputEl.value, this.folder, this.exists) !== null) return;
+		const typed = this.inputEl.value;
+		const found =
+			titleProblem(typed, this.folder, this.exists) === 'empty'
+				? 'empty'
+				: titleProblem(this.nameFor(typed, choice.value), this.folder, this.exists);
+		if (found !== null) {
+			if (found !== 'empty') this.showProblem(found);
+			return;
+		}
 		super.selectSuggestion(choice, evt);
+	}
+
+	private showProblem(problem: TitleProblem): void {
+		this.statusEl.setText(titleMessage(problem));
+		this.statusEl.toggleClass('mod-problem', true);
 	}
 
 	onChooseSuggestion(choice: Choice<T>): void {
@@ -85,12 +105,16 @@ class NotePrompt<T> extends SuggestModal<Choice<T>> {
 	}
 }
 
-/** Ask for a usable note name and one of these, or null when dismissed. */
+/**
+ * Ask for a usable note name and one of these, or null when dismissed.
+ * `nameFor` is the name a note gets from what was typed and what was picked.
+ */
 export function promptForNote<T>(
 	app: App,
 	folder: string,
 	exists: (path: string) => boolean,
 	choices: Choice<T>[],
+	nameFor: (typed: string, value: T) => string,
 ): Promise<NewNote<T> | null> {
 	return new Promise((resolve) => {
 		let settled = false;
@@ -99,6 +123,6 @@ export function promptForNote<T>(
 			settled = true;
 			resolve(note);
 		};
-		new NotePrompt(app, folder, exists, choices, done).open();
+		new NotePrompt(app, folder, exists, choices, nameFor, done).open();
 	});
 }

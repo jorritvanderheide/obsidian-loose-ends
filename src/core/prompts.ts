@@ -95,6 +95,15 @@ function promptUnder(lines: readonly string[], at: number): Comment | null {
 	return null;
 }
 
+/**
+ * The text of a template's title heading, the first one carrying `{{title}}`,
+ * or null when it has none. Found the way `readPrompts` finds it, so a `#` in
+ * frontmatter or fenced code is never mistaken for it.
+ */
+export function titleHeading(template: string): string | null {
+	return headingsIn(template.split('\n')).find((heading) => TITLE.test(heading.text))?.text ?? null;
+}
+
 /** What a template asks under each of its headings. */
 export function readPrompts(template: string): TemplatePrompts {
 	const lines = template.split('\n');

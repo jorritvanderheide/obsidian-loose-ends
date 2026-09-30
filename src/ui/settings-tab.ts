@@ -26,7 +26,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Template folder',
-				desc: 'Markdown files here are offered when a note is made. {{title}} becomes the name of the note, and the cursor starts at {{cursor}}. A comment right under a heading is drawn in the note as a prompt, not copied.',
+				desc: 'Markdown files here are offered when a note is made. {{title}} becomes the name of the note, {{date}} the date as YYYY-MM-DD, and the cursor starts at {{cursor}}. A title heading with {{date}} in it puts the date in the name too, unless a date was typed. A comment right under a heading is drawn in the note as a prompt, not copied.',
 				control: { type: 'folder', key: 'templateFolder' },
 			},
 			{
