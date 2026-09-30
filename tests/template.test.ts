@@ -164,3 +164,17 @@ describe('makeNote', () => {
 		expect(makeNote(question, 'Why sign', '2026-09-30').name).toBe('Why sign');
 	});
 });
+
+describe('names with $ in them', () => {
+	it('keeps $ patterns in a typed name literal, in the text and in the name', () => {
+		expect(fillTemplate('# {{title}}', 'Budget $& plan', '2026-09-30')).toBe('# Budget $& plan');
+		expect(makeNote('# {{title}} {{date}}\n', "Price $' tiers", '2026-09-30').name).toBe("Price $' tiers 2026-09-30");
+	});
+});
+
+describe('dateIn, at the start of a name', () => {
+	it('finds a date that opens the name, as well as one after a space', () => {
+		expect(dateIn('2026-10-07')).toBe('2026-10-07');
+		expect(makeNote('# {{title}} {{date}}\n', '2026-10-07 Hanna', '2026-09-30').name).toBe('Hanna 2026-10-07');
+	});
+});

@@ -73,11 +73,17 @@ export async function addNote(context: Context): Promise<void> {
 	// a template that dates the name decides what the note will be called, and
 	// the prompt checks that name before anything is made.
 	const files = templateFiles(context.app, context.settings.templateFolder);
-	const texts = new Map(
-		await Promise.all(
-			files.map(async (file) => [file.path, withoutPrompts(await context.app.vault.cachedRead(file))] as const),
-		),
-	);
+	let texts: Map<string, string>;
+	try {
+		texts = new Map(
+			await Promise.all(
+				files.map(async (file) => [file.path, withoutPrompts(await context.app.vault.cachedRead(file))] as const),
+			),
+		);
+	} catch (error) {
+		new Notice(`Loose Ends could not read the templates: ${error instanceof Error ? error.message : String(error)}`);
+		return;
+	}
 	const textOf = (choice: Choice) => (choice.kind === 'template' ? (texts.get(choice.file.path) ?? '') : '');
 	const today = isoDate(new Date());
 	const made = (typed: string, choice: Choice) =>

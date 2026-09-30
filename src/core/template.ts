@@ -5,8 +5,12 @@ import { titleHeading } from './prompts';
 
 const TITLE = /\{\{\s*title\s*\}\}/gi;
 const DATE = /\{\{\s*date\s*\}\}/gi;
-/** A date as `{{date}}` writes it, standing on its own in a name. */
-const ISO_DATE = /(?<![\d-])\d{4}-\d{2}-\d{2}(?![\d-])/;
+/**
+ * A date as `{{date}}` writes it, standing on its own in a name: the first
+ * group. Matched with a group rather than a lookbehind, which older iOS cannot
+ * parse, and one regex it cannot parse stops the whole plugin loading there.
+ */
+const ISO_DATE = /(?:^|[^\d-])(\d{4}-\d{2}-\d{2})(?![\d-])/;
 
 /**
  * A template's text with the note's title and date in it.
@@ -20,7 +24,9 @@ const ISO_DATE = /(?<![\d-])\d{4}-\d{2}-\d{2}(?![\d-])/;
  * way that sorts. A template naming none of them is used as it stands.
  */
 export function fillTemplate(template: string, title: string, date: string): string {
-	return template.replace(TITLE, title).replace(DATE, date);
+	// Functions, not strings, as the replacement: a string would read `$&` or
+	// `$'` in a typed name as a pattern and write something else.
+	return template.replace(TITLE, () => title).replace(DATE, () => date);
 }
 
 /** A day as `{{date}}` writes it, `YYYY-MM-DD`, in local time. */
@@ -31,7 +37,7 @@ export function isoDate(day: Date): string {
 
 /** The `YYYY-MM-DD` date a typed name already carries, or null. */
 export function dateIn(name: string): string | null {
-	return ISO_DATE.exec(name)?.[0] ?? null;
+	return ISO_DATE.exec(name)?.[1] ?? null;
 }
 
 /**
@@ -60,7 +66,7 @@ export function makeNote(template: string, typed: string, today: string): { name
 	const date = typedDate ?? today;
 	const heading = datesName(template) ? titleHeading(template) : null;
 	const title =
-		heading !== null && typedDate !== null ? name.replace(typedDate, '').replace(/\s+/g, ' ').trim() : name;
+		heading !== null && typedDate !== null ? name.replace(typedDate, () => '').replace(/\s+/g, ' ').trim() : name;
 	return {
 		name: heading === null ? name : fillTemplate(heading, title, date).trim(),
 		text: fillTemplate(template, title, date),
