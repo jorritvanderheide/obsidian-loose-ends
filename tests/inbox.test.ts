@@ -6,6 +6,7 @@ import {
 	recentlyFiled,
 	unfiledNotes,
 	withFiling,
+	withoutFiling,
 	withRename,
 	type InboxNote,
 } from '../src/core/inbox';
@@ -112,5 +113,11 @@ describe('withFiling', () => {
 describe('withRename', () => {
 	it('moves the filing with the note', () => {
 		expect(withRename([{ path: 'a.md', at: 1 }], 'a.md', 'b.md')).toEqual([{ path: 'b.md', at: 1 }]);
+	});
+});
+
+describe('withoutFiling', () => {
+	it('forgets a deleted note', () => {
+		expect(withoutFiling([{ path: 'a.md', at: 1 }, { path: 'b.md', at: 2 }], 'a.md')).toEqual([{ path: 'b.md', at: 2 }]);
 	});
 });

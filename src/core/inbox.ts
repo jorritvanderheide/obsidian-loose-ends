@@ -87,6 +87,11 @@ export function withFiling(log: readonly Filing[], path: string, at: number): Fi
 	return [{ path, at }, ...log.filter((entry) => entry.path !== path && at - entry.at < RECENT_FOR)];
 }
 
+/** The log after a note was deleted, so a new note made at its path does not inherit its filing. */
+export function withoutFiling(log: readonly Filing[], path: string): Filing[] {
+	return log.filter((entry) => entry.path !== path);
+}
+
 /** The log after a note was renamed, so its filing follows it. */
 export function withRename(log: readonly Filing[], from: string, to: string): Filing[] {
 	return log.map((entry) => (entry.path === from ? { ...entry, path: to } : entry));

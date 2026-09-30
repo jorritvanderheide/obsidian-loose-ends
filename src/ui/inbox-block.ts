@@ -11,6 +11,7 @@ import type { Context } from '../context';
 import { INBOX_ROWS, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
 import { activeAxes } from '../core/settings';
 import { inboxNotes, loadFilings, onInboxChange } from '../inbox';
+import { inScope } from '../mirror';
 import { addFilingItems } from './note-menu';
 
 export const INBOX_BLOCK = 'loose-ends';
@@ -40,14 +41,29 @@ export class InboxBlock extends MarkdownRenderChild {
 		const app = this.context.app;
 		this.draw();
 		// Filing a note from a row takes it out of the list without a refresh.
-		this.registerEvent(app.metadataCache.on('changed', this.redraw));
-		this.registerEvent(app.vault.on('delete', this.redraw));
-		this.registerEvent(app.vault.on('rename', this.redraw));
+		// Only a note the block could list, so typing elsewhere, in the note
+		// holding the block included, does not redraw it on every pause.
+		const listed = (path: string) => {
+			if (inScope(path, this.context.settings.notesFolder)) this.redraw();
+		};
+		this.registerEvent(app.metadataCache.on('changed', (file) => listed(file.path)));
+		this.registerEvent(app.vault.on('create', (file) => listed(file.path)));
+		this.registerEvent(app.vault.on('delete', (file) => listed(file.path)));
+		this.registerEvent(
+			app.vault.on('rename', (file, old) => {
+				listed(file.path);
+				listed(old);
+			}),
+		);
 		this.registerEvent(onInboxChange(app, this.redraw));
 		// Drawn before the cache is ready, every note would read as unfiled.
-		app.workspace.onLayoutReady(this.redraw);
+		if (!app.workspace.layoutReady) app.workspace.onLayoutReady(this.redraw);
 		// Moving the highlight is a class on one row, not a redraw.
 		this.registerEvent(app.workspace.on('file-open', () => highlight(this.containerEl, app)));
+	}
+
+	onunload(): void {
+		this.redraw.cancel();
 	}
 
 	private draw(): void {

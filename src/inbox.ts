@@ -7,7 +7,7 @@
 
 import { TFile, type App, type EventRef, type Events } from 'obsidian';
 import { isFiled } from './core/filing';
-import { readFilings, withFiling, withRename, type Filing, type InboxNote } from './core/inbox';
+import { readFilings, withFiling, withoutFiling, withRename, type Filing, type InboxNote } from './core/inbox';
 import { activeAxes, type Settings } from './core/settings';
 import { readTags } from './core/tags';
 import { cachedTags } from './frontmatter';
@@ -64,13 +64,23 @@ export class FilingWatch {
 		private readonly settings: () => Settings,
 	) {}
 
-	/** Take stock without logging: on startup, and after the axes change. */
+	/**
+	 * Take stock without logging: on startup, and whenever settings change.
+	 *
+	 * A note the metadata cache has not read yet is left out rather than
+	 * counted as unfiled. On a new device or a rebuilt cache it has no tags until
+	 * it is read, and counting it would log every filed note as filed the moment
+	 * the cache caught up.
+	 */
 	reset(): void {
 		const axes = activeAxes(this.settings());
 		this.unfiled = new Set(
-			inboxNotes(this.app, this.settings())
-				.filter((note) => !isFiled(axes, note.tags))
-				.map((note) => note.path),
+			this.app.vault
+				.getMarkdownFiles()
+				.filter((file) => inScope(file.path, this.settings().notesFolder))
+				.filter((file) => this.app.metadataCache.getFileCache(file) !== null)
+				.filter((file) => !isFiled(axes, readTags(cachedTags(this.app, file))))
+				.map((file) => file.path),
 		);
 	}
 
@@ -100,5 +110,7 @@ export class FilingWatch {
 
 	deleted(path: string): void {
 		this.unfiled.delete(path);
+		const log = loadFilings(this.app);
+		if (log.some((entry) => entry.path === path)) saveFilings(this.app, withoutFiling(log, path));
 	}
 }

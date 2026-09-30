@@ -198,6 +198,9 @@ export default class LooseEndsPlugin extends Plugin {
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 		this.syncAxisCommands();
+		// A settings change can file or unfile notes, and that is never somebody
+		// filing one, so the watch takes stock again rather than logging it.
+		this.watch.reset();
 		announceInboxChange(this.app);
 		if (this.settings.templateFolder !== this.promptsFrom) await this.readPrompts();
 	}
