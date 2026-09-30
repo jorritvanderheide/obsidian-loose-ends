@@ -58,6 +58,10 @@ is progress, and making you redo it would be the annoying half.
 **Set `<axis>`** changes one answer afterwards, whether or not it was already
 given. One command per axis, named after it.
 
+Both are on the right-click menu of a note in the notes folder, in the file
+explorer and anywhere else Obsidian offers a note's menu: **File note** while
+the note is still missing an answer, and **Set `<axis>`** always.
+
 **Refresh tags** checks every note in your notes folder against the axes. It
 runs by itself when you remove an axis, and when you close settings after
 changing them. An axis still missing its namespace or values does not count yet.

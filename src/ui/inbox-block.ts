@@ -6,14 +6,12 @@
 // decided in `core/inbox.ts`.
 
 import { MarkdownRenderChild, MarkdownView, Menu, debounce, moment, setIcon, type App, type TFile } from 'obsidian';
-import { fileNote, setAxis } from '../commands/file-note';
+import { fileNote } from '../commands/file-note';
 import type { Context } from '../context';
-import { isFiled } from '../core/filing';
 import { INBOX_ROWS, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
 import { activeAxes } from '../core/settings';
-import { readTags } from '../core/tags';
-import { cachedTags } from '../frontmatter';
 import { inboxNotes, loadFilings, onInboxChange } from '../inbox';
+import { addFilingItems } from './note-menu';
 
 export const INBOX_BLOCK = 'loose-ends';
 
@@ -144,31 +142,10 @@ function noteRow(
 	return { el, file };
 }
 
-/**
- * File the note, or change one answer on it. On a filed row too, since an
- * answer given in a hurry is the one most likely to want changing.
- */
+/** File the note, or change one answer on it: the same menu the file explorer has. */
 function rowMenu(context: Context, file: TFile, el: HTMLElement, event: MouseEvent): void {
-	const axes = activeAxes(context.settings);
-	const tags = readTags(cachedTags(context.app, file));
 	const menu = new Menu();
-	if (!isFiled(axes, tags)) {
-		menu.addItem((item) =>
-			item
-				.setTitle('File note')
-				.setIcon('tag')
-				.onClick(() => void fileNote(context, file)),
-		);
-		menu.addSeparator();
-	}
-	for (const axis of axes) {
-		menu.addItem((item) =>
-			item
-				.setTitle(`Set ${axis.namespace}`)
-				.setIcon('pencil')
-				.onClick(() => void setAxis(context, axis, file)),
-		);
-	}
+	addFilingItems(menu, context, file);
 	event.preventDefault();
 	// The context-menu key arrives with no pointer to anchor to.
 	if (event.clientX === 0 && event.clientY === 0) {

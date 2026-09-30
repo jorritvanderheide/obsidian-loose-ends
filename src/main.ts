@@ -10,6 +10,7 @@ import { inScope, syncMirror, sweepMirror } from './mirror';
 import { templatePrompts } from './templates';
 import { ghosts, redrawGhosts } from './ui/ghost';
 import { INBOX_BLOCK, InboxBlock } from './ui/inbox-block';
+import { addFilingItems } from './ui/note-menu';
 import { LooseEndsSettingTab } from './ui/settings-tab';
 
 export default class LooseEndsPlugin extends Plugin {
@@ -66,6 +67,16 @@ export default class LooseEndsPlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor(INBOX_BLOCK, (_source, el, ctx) => {
 			ctx.addChild(new InboxBlock(el, this.context(), ctx.sourcePath));
 		});
+
+		// Filing on a note's own menu, wherever Obsidian offers one: the file
+		// explorer, a tab's header, a link.
+		this.registerEvent(
+			this.app.workspace.on('file-menu', (menu, file) => {
+				if (!(file instanceof TFile) || file.extension !== 'md') return;
+				if (!inScope(file.path, this.settings.notesFolder)) return;
+				addFilingItems(menu, this.context(), file);
+			}),
+		);
 
 		this.registerEvent(
 			this.app.metadataCache.on('changed', (file) => {
