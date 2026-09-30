@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	inboxLabel,
 	owedLabel,
 	readFilings,
 	RECENT_FOR,
@@ -119,5 +120,22 @@ describe('withRename', () => {
 describe('withoutFiling', () => {
 	it('forgets a deleted note', () => {
 		expect(withoutFiling([{ path: 'a.md', at: 1 }, { path: 'b.md', at: 2 }], 'a.md')).toEqual([{ path: 'b.md', at: 2 }]);
+	});
+});
+
+describe('inboxLabel', () => {
+	it('is the unfiled tag, capitalised', () => {
+		expect(inboxLabel('inbox')).toBe('Inbox');
+	});
+
+	it('is the last segment of a nested tag, without a leading #', () => {
+		expect(inboxLabel('status/unfiled')).toBe('Unfiled');
+		expect(inboxLabel('#to-do/triage')).toBe('Triage');
+	});
+
+	it('is Unfiled when there is no tag, or nothing left of it', () => {
+		expect(inboxLabel('')).toBe('Unfiled');
+		expect(inboxLabel('  ')).toBe('Unfiled');
+		expect(inboxLabel('status/')).toBe('Unfiled');
 	});
 });

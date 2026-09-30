@@ -29,6 +29,19 @@ export const RECENT_FOR = 7 * 24 * 60 * 60 * 1000;
 /** How many unfiled notes are shown before "and N more". */
 export const INBOX_ROWS = 10;
 
+/**
+ * What the inbox block calls the notes still owing an answer.
+ *
+ * The unfiled tag's own name, so the block and a tag tree call the same notes
+ * the same thing: its last segment, capitalised, because a tag like
+ * `status/unfiled` is an address and the block wants a word. "Unfiled" when
+ * there is no tag, or nothing left of it.
+ */
+export function inboxLabel(unfiledTag: string): string {
+	const word = unfiledTag.trim().replace(/^#+/, '').split('/').pop()?.trim() ?? '';
+	return word === '' ? 'Unfiled' : word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 /** The notes still owing an answer, newest first, with what each one owes. */
 export function unfiledNotes(notes: readonly InboxNote[], axes: readonly Axis[]): { note: InboxNote; missing: Axis[] }[] {
 	return notes

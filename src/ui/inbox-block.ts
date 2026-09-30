@@ -8,7 +8,7 @@
 import { MarkdownRenderChild, MarkdownView, Menu, debounce, moment, setIcon, type App, type TFile } from 'obsidian';
 import { fileNote } from '../commands/file-note';
 import type { Context } from '../context';
-import { INBOX_ROWS, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
+import { INBOX_ROWS, inboxLabel, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
 import { activeAxes } from '../core/settings';
 import { inboxNotes, loadFilings, onInboxChange } from '../inbox';
 import { inScope } from '../mirror';
@@ -93,7 +93,7 @@ function renderInbox(root: HTMLElement, context: Context, host: string): void {
 
 	// Always open. It is what the block is for, and a fold would only hide it.
 	const inbox = folder(tree, {
-		label: 'Unfiled',
+		label: inboxLabel(settings.unfiledTag),
 		icon: 'inbox',
 		hint: 'Notes still missing an answer.',
 		count: unfiled.length,

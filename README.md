@@ -73,11 +73,13 @@ A block shows the inbox on any note of your own:
 ```
 ````
 
-**Unfiled** lists every note in the notes folder still missing an answer,
-newest first, with what it is missing in the tooltip. Click a row to open the
-note in a new tab, press the tag at its end to file it where it is, or
-right-click it to file it or set one axis. **Recently filed**, under it and
-shut until you open it, lists in grey the notes filed in the last seven days.
+The first group lists every note in the notes folder still missing an answer,
+newest first, with what it is missing in the tooltip. It is named after the
+unfiled tag: **Inbox** when the tag is `inbox`, **Unfiled** when there is none.
+Click a row to open the note in a new tab, press the tag at its end to file it
+where it is, or right-click it to file it or set one axis. **Recently filed**,
+under it and shut until you open it, lists in grey the notes filed in the last
+seven days.
 When a note was filed is the one thing no tag says, so it is kept on this
 device only, and a note filed by changing the axes rather than its tags does
 not count.
@@ -109,7 +111,7 @@ answer per note, and material gets used more than once.
 | **Notes folder** | Where a new note is made, and the only folder that ever gets the unfiled tag. Empty means the whole vault. Keeping it narrow is what stops the tag landing on notes another plugin owns, such as a literature folder, where every note would read as unfiled for ever. |
 | **Template folder** | Markdown files here are offered when a note is made. `{{title}}` becomes the name of the note, `{{date}}` the date as `YYYY-MM-DD`, and the cursor starts at `{{cursor}}`. A title heading with `{{date}}` in it, such as `# {{title}} {{date}}`, puts the date in the note's name too: `Hanna` becomes `Hanna 2026-09-30`. A date typed in the name is used instead of today's. An HTML comment right under a heading is that heading's prompt, drawn in the note instead of copied into it. |
 | **Remember the last template** | On, the template you picked last is offered first. Off, `Default` is offered first and the rest by name, for a vault where one template is the usual answer. |
-| **Unfiled tag** | The tag written on a note that has not answered everything. Empty writes none, for a vault that would rather query than browse. |
+| **Unfiled tag** | The tag written on a note that has not answered everything, and the name of the inbox block's first group (its last segment, capitalised). Empty writes none, for a vault that would rather query than browse. |
 | **Axes** | What a note has to answer. A namespace and its values. The picker offers the values you picked most recently first, then the rest in the order given here. |
 
 The loop is not a setting. Capture without classifying, then classify, with
