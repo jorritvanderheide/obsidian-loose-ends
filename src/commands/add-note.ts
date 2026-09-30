@@ -11,6 +11,7 @@ import { byRecent, readRecent, rememberPick } from '../core/recent';
 import { fillTemplate, placeCursor, STARTER_TEMPLATE, templateName } from '../core/template';
 import { syncMirror } from '../mirror';
 import { templateFiles } from '../templates';
+import type { Choice as OfferOf } from '../ui/choose';
 import { promptForNote } from '../ui/prompt';
 
 /**
@@ -22,6 +23,8 @@ import { promptForNote } from '../ui/prompt';
  * escaped picker silently made an empty note.
  */
 type Choice = { kind: 'none' } | { kind: 'template'; file: TFile };
+
+type Offer = OfferOf<Choice>;
 
 /**
  * Where the order templates were last picked in is kept: this vault, this
@@ -62,14 +65,14 @@ export async function addNote(context: Context): Promise<void> {
 	const exists = (path: string) => context.app.vault.getAbstractFileByPath(path) !== null;
 
 	const recent = readRecent(context.app.loadLocalStorage(RECENT_KEY));
+	const templates: Offer[] = templateFiles(context.app, context.settings.templateFolder).map((file) => ({
+		value: { kind: 'template', file },
+		label: templateName(file.path),
+	}));
+	// An empty note only when there is no template to offer, or the prompt
+	// would have nothing to pick and no note could be made at all.
 	const choices = byRecent(
-		[
-			{ value: { kind: 'none' } as Choice, label: 'No template', description: 'An empty note' },
-			...templateFiles(context.app, context.settings.templateFolder).map((file) => ({
-				value: { kind: 'template' as const, file },
-				label: templateName(file.path),
-			})),
-		],
+		templates.length > 0 ? templates : [{ value: { kind: 'none' }, label: 'No template', description: 'An empty note' }],
 		(choice) => choiceKey(choice.value),
 		recent,
 	);

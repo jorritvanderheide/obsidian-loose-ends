@@ -104,7 +104,7 @@ tag, and every word you wrote are yours and are passed through untouched.
 
 It never writes outside the notes folder, runs no commands, and talks to
 nothing. The one exception is on a fresh install: it puts a starter template,
-`Unfiled.md`, in the template folder, unless a file by that name is already
+`Default.md`, in the template folder, unless a file by that name is already
 there. Edit it or delete it; it is not written again.
 
 ## Requirements

@@ -53,4 +53,4 @@ export function templateName(path: string): string {
  * The empty first line keeps the heading clear of the frontmatter the mirror
  * writes above it.
  */
-export const STARTER_TEMPLATE = { name: 'Unfiled', text: '\n# {{title}}\n\n{{cursor}}' };
+export const STARTER_TEMPLATE = { name: 'Default', text: '\n# {{title}}\n\n{{cursor}}' };
