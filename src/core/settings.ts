@@ -8,6 +8,10 @@
 // a tag that will not go away until you have. That is the product. Making it
 // configurable would turn it into a rules engine that asks you to invent a
 // filing system before you can use one, which is what Dataview already is.
+//
+// A preference gets in only when it changes how a picker offers things, never
+// what is written or when a note counts as filed, and its default is how the
+// plugin behaved without it.
 
 import type { Axis } from './vocabulary';
 import { normaliseNamespace, normaliseValue } from './vocabulary';
