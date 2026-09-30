@@ -37,13 +37,30 @@ class NotePrompt<T> extends SuggestModal<Choice<T>> {
 	}
 
 	getSuggestions(query: string): Choice<T>[] {
+		this.showStatus(query);
+		return this.choices;
+	}
+
+	/**
+	 * Typing the name checks it and leaves the list alone.
+	 *
+	 * Obsidian's own handler lists the suggestions again on every keystroke,
+	 * which moves the selection back to the first one, so a template picked
+	 * before the name was typed was quietly dropped. The list does not depend
+	 * on the name, so there is nothing to list again. `onInput` is not in the
+	 * typings; if it goes away, the prompt still works and only the reset is back.
+	 */
+	onInput(): void {
+		this.showStatus(this.inputEl.value);
+	}
+
+	private showStatus(query: string): void {
 		const found = titleProblem(query, this.folder, this.exists);
 		// Nothing typed yet is not yet a mistake, so it prompts without scolding.
 		if (found === 'empty') this.statusEl.setText('Type a name for the note.');
 		else if (found === null) this.statusEl.setText(notePath(this.folder, query));
 		else this.statusEl.setText(titleMessage(found));
 		this.statusEl.toggleClass('mod-problem', found !== null && found !== 'empty');
-		return this.choices;
 	}
 
 	renderSuggestion(choice: Choice<T>, el: HTMLElement): void {
