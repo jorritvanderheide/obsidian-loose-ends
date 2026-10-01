@@ -80,6 +80,25 @@ export function owedLabel(missing: readonly Axis[]): string {
 	return `No ${list} yet`;
 }
 
+const MINUTE = 60 * 1000;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+const AGO = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+/**
+ * When a recently filed note was filed, for its tooltip.
+ *
+ * In English, like the rest of the block. Nothing under Recently filed is
+ * older than `RECENT_FOR`, so days are the largest unit it needs.
+ */
+export function filedLabel(at: number, now: number): string {
+	const ago = Math.max(0, now - at);
+	if (ago < MINUTE) return 'Filed just now';
+	if (ago < HOUR) return `Filed ${AGO.format(-Math.floor(ago / MINUTE), 'minute')}`;
+	if (ago < DAY) return `Filed ${AGO.format(-Math.floor(ago / HOUR), 'hour')}`;
+	return `Filed ${AGO.format(-Math.floor(ago / DAY), 'day')}`;
+}
+
 /**
  * The log as it was kept, with anything unreadable dropped. Losing it costs
  * the Recently filed section and nothing else.

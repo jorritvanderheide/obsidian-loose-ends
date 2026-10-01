@@ -5,10 +5,10 @@
 // whatever theme is installed. Which notes appear, and in what order, is
 // decided in `core/inbox.ts`.
 
-import { MarkdownRenderChild, MarkdownView, Menu, debounce, moment, setIcon, type App, type TFile } from 'obsidian';
+import { MarkdownRenderChild, MarkdownView, Menu, debounce, setIcon, type App, type TFile } from 'obsidian';
 import { fileNote } from '../commands/file-note';
 import type { Context } from '../context';
-import { INBOX_ROWS, inboxLabel, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
+import { INBOX_ROWS, filedLabel, inboxLabel, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
 import { activeAxes } from '../core/settings';
 import { inboxNotes, loadFilings, onInboxChange } from '../inbox';
 import { inScope } from '../mirror';
@@ -133,7 +133,7 @@ function renderInbox(root: HTMLElement, context: Context, host: string): void {
 		cls: 'loose-ends-recent',
 	});
 	if (recent) {
-		for (const { note, at } of filed) noteRow(recent, context, note, `Filed ${moment(at).fromNow()}`);
+		for (const { note, at } of filed) noteRow(recent, context, note, filedLabel(at, Date.now()));
 	}
 
 	highlight(root, app);

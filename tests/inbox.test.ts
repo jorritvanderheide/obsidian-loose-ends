@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	filedLabel,
 	inboxLabel,
 	owedLabel,
 	readFilings,
@@ -80,6 +81,36 @@ describe('owedLabel', () => {
 
 	it('names several in order', () => {
 		expect(owedLabel([domain, source, { namespace: 'type', values: ['x'] }])).toBe('No domain, source and type yet');
+	});
+});
+
+describe('filedLabel', () => {
+	const MINUTE = 60 * 1000;
+	const HOUR = 60 * MINUTE;
+	const DAY = 24 * HOUR;
+
+	it('says just now under a minute', () => {
+		expect(filedLabel(NOW, NOW)).toBe('Filed just now');
+		expect(filedLabel(NOW - 59 * 1000, NOW)).toBe('Filed just now');
+	});
+
+	it('counts minutes under an hour', () => {
+		expect(filedLabel(NOW - MINUTE, NOW)).toBe('Filed 1 minute ago');
+		expect(filedLabel(NOW - 59 * MINUTE, NOW)).toBe('Filed 59 minutes ago');
+	});
+
+	it('counts hours under a day', () => {
+		expect(filedLabel(NOW - HOUR, NOW)).toBe('Filed 1 hour ago');
+		expect(filedLabel(NOW - 23 * HOUR, NOW)).toBe('Filed 23 hours ago');
+	});
+
+	it('counts days after that', () => {
+		expect(filedLabel(NOW - DAY, NOW)).toBe('Filed yesterday');
+		expect(filedLabel(NOW - 6 * DAY, NOW)).toBe('Filed 6 days ago');
+	});
+
+	it('reads a time in the future as just now', () => {
+		expect(filedLabel(NOW + HOUR, NOW)).toBe('Filed just now');
 	});
 });
 
