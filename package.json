@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-loose-ends",
 	"version": "1.4.0",
-	"description": "Capture notes without classifying them, then file them by tag and see what is still unfiled.",
+	"description": "Write notes now and tag them later, with an inbox of the notes still waiting for tags.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
