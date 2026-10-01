@@ -1,158 +1,395 @@
 # Loose Ends
 
-[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
+**Write notes now and tag them later, with an inbox of the notes still waiting for tags.**
 
-**Capture a note without classifying it, then classify it later, and let nothing quietly stay unclassified.**
+Works well with [Tag Along](https://community.obsidian.md/plugins/tag-along),
+which shows your tags as a folder tree. See
+[Works well with](#10-works-well-with).
 
-Deciding where a note belongs is the most expensive thing about writing one, and
-it is due at the worst possible moment: while you still have the thought. So
-either you stop to classify and lose the thread, or you do not and the note joins
-the pile nobody will ever sort.
+<br/>
 
-Loose Ends splits the two. A new note arrives answering nothing. Whatever it has
-not answered, it carries one tag saying so, and that tag is what puts it in
-front of you until you deal with it.
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=Downloads&query=%24%5B%22loose-ends%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
+![Obsidian Compatibility](https://img.shields.io/badge/Obsidian-v1.13.0+-483699?logo=obsidian&style=flat-square)
+![Desktop and mobile](https://img.shields.io/badge/platform-desktop%20%7C%20mobile-483699?style=flat-square)
+[![Checks](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/lint.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/lint.yml)
+[![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)](LICENSE)
 
-## How it works
+<!-- SCREENSHOT images/hero.png: a dashboard note with the inbox block showing a few unfiled notes, one with its "File note" tag button on hover, next to a freshly made note being written. -->
+![Loose Ends](https://placehold.co/1200x675/png?text=Inbox+block+next+to+a+new+note)
 
-You say what a note has to answer. An **axis** is a tag namespace and the values
-it accepts:
+You're in a meeting, or halfway through an article, and a thought comes up.
+Before you can write it down, you have to decide where it goes: which folder,
+which tags. That's the worst possible moment to decide, because you still have
+the thought. So either you stop to sort it and lose the thread, or you don't,
+and the note ends up in a pile that nobody will ever sort.
 
-```
-domain   phd, vault, personal
-source   ai, article, book, meeting, own, prototype, talk
-```
+Loose Ends splits the two. You write the note now, and sort it later. Until
+you've sorted it, the note carries one tag saying so, and that tag keeps it in
+front of you. The moment you've given it every tag it needs, the extra tag goes
+away by itself.
 
-A note that has answered every axis is **filed**. One that has not is
-**unfiled**, and gets the tag you named for it, such as `status/unfiled`.
+<br/>
 
-That tag is the only thing stored, and it is derived: read off the note's own
-tags every time, never trusted over them. Delete it by hand and it comes back.
-Answer the last axis and it goes. Nothing caches, and nothing has to be kept in
-step, because there is only ever one copy of the fact.
+## 1 Installation
 
-Which matters because the tag is not the record. **The answers are the record.**
-The tag exists so a tag tree can show you a folder of what is still owed, and
-that is its whole job.
+Go to Settings → Community plugins → Browse in Obsidian, search for "Loose
+Ends", then install and enable it. You can also open
+[its page in the plugin directory](https://community.obsidian.md/plugins/loose-ends).
 
-## Working the loop
+Loose Ends needs Obsidian 1.13 or later, and works on desktop and mobile.
 
-**Add note** asks for a name and a template in one prompt: you type the name,
-and the templates in your template folder are listed under it, the ones you
-picked most recently first. It asks nothing else. A template may carry the tags
-it is certain of, and the rest is left for later.
+<br/>
 
-A template can also ask something under each heading. Put an HTML comment right
-under a heading and it becomes that heading's prompt: **Add note** leaves it out
-of the note, and the editor draws it faintly on the empty line under the heading
-until you write there. It lives only in the template, so rewording it rewords
-every note, and nothing stays behind under what you wrote. A note gets the
-prompts of the template whose headings it has; a template with no heading
-besides its title cannot be recognised, so its prompts are never drawn.
+## 2 Getting started
 
-**File note** asks only what the open note is still missing, one axis at a time,
-in the order you configured them, offering the values you picked most recently
-first. Dismiss a question and what you already answered is kept: half an answer
-is progress, and making you redo it would be the annoying half.
+Loose Ends does nothing until you tell it what a note needs. So:
 
-**Set `<axis>`** changes one answer afterwards, whether or not it was already
-given. One command per axis, named after it.
+1. **Say what every note needs.** In Settings → Loose Ends → **Axes**, click
+   **Add axis**. Type `domain` in the first field and `work, personal` in the
+   second. Add a second axis: `source`, with `article, book, meeting`. Every
+   note now needs a `domain/…` tag and a `source/…` tag.
+2. **Name the unfiled tag.** Set **Unfiled tag** to `inbox`. That's the tag a
+   note carries while it's missing something.
+3. **Write a note.** Run **Add note**, type a name, and press Enter. The note
+   opens with the cursor ready, and gets the `inbox` tag, because it doesn't
+   have a `domain` or `source` yet.
+4. **See what's waiting.** Put this block on a note of your own, like a
+   dashboard:
 
-Both are on the right-click menu of a note in the notes folder, in the file
-explorer and anywhere else Obsidian offers a note's menu: **File note** while
-the note is still missing an answer, and **Set `<axis>`** always.
+   ````
+   ```loose-ends
+   ```
+   ````
 
-**Refresh tags** checks every note in your notes folder against the axes. It
-runs by itself when you remove an axis, and when you close settings after
-changing them. An axis still missing its namespace or values does not count yet.
+   It lists every note that's still missing something, newest first.
+5. **File it.** Click the tag button on a row, or run **File note** in the note
+   itself. Loose Ends asks *Which domain?* and *Which source?*, and once you've
+   answered both, the `inbox` tag is gone and the note moves to **Recently
+   filed**.
 
-A block shows the inbox on any note of your own:
+<!-- SCREENSHOT images/file-note.gif: the File note question "Which domain?" with work and personal offered, then "Which source?", then the note leaving the inbox block. -->
+![Filing a note](https://placehold.co/900x500/png?text=Filing+a+note)
 
-````
-```loose-ends
-```
-````
+<br/>
 
-The first group lists every note in the notes folder still missing an answer,
-newest first, with what it is missing in the tooltip. It is named after the
-unfiled tag: **Inbox** when the tag is `inbox`, **Unfiled** when there is none.
-Click a row to open the note in a new tab, press the tag at its end to file it
-where it is, or right-click it to file it or set one axis. **Recently filed**,
-under it and shut until you open it, lists in grey the notes filed in the last
-seven days.
-When a note was filed is the one thing no tag says, so it is kept on this
-device only, and a note filed by changing the axes rather than its tags does
-not count.
+## 3 Safety and quality
 
-None of the commands has a hotkey. Which keys you want is yours to decide, you
-already have bindings this plugin knows nothing about, and a default that
-collides is worse than no default.
+Loose Ends only writes two things in a note: the tag you pick when it asks you
+a question, and the unfiled tag. Every other tag, every other property and
+every word you wrote stay as they are. It only ever writes in your notes
+folder, so notes that belong to something else, like a literature folder, are
+left alone. [Section 11](#11-network-and-file-disclosure) lists exactly what it
+writes and when.
 
-## Values are compared exactly
+It doesn't connect to the internet and doesn't run any programs.
 
-`domain/phd/wp1` does not answer the `domain` axis, and neither does a bare
-`domain`. Only `domain/phd` does. When **File note** or **Set `<axis>`** asks
-about an axis, the question names any tag under it that is not one of its
-values, and picking a value replaces it. Nothing else touches it.
-
-This is deliberate and it is the bug this plugin was written after. Its
-predecessor compared with `startsWith`, so a nested tag passed validation while
-the vocabulary only ever knew flat values and no suggester would ever offer one.
-The only way in was typing frontmatter by hand, which made the first typo a
-matter of time, and one that would not surface until the tag tree came apart.
-
-If you want sub-categories, a link does it better than a tag. A tag forces one
-answer per note, and material gets used more than once.
-
-## Settings
-
-| Setting | |
-| --- | --- |
-| **Notes folder** | Where a new note is made, and the only folder that ever gets the unfiled tag. Empty means the whole vault. Keeping it narrow is what stops the tag landing on notes another plugin owns, such as a literature folder, where every note would read as unfiled for ever. |
-| **Template folder** | Markdown files here are offered when a note is made. `{{title}}` becomes the name of the note, `{{date}}` the date as `YYYY-MM-DD` (`{{date:YYYY-MM}}` or `{{date:YYYY}}` for less of it, so it still sorts), and the cursor starts at `{{cursor}}`. A title heading with `{{date}}` in it, such as `# {{title}} {{date}}`, puts the date in the note's name too: `Hanna` becomes `Hanna 2026-09-30`. A date typed in the name is used instead of today's; a heading dated to the month also takes a typed month, so `# {{title}} {{date:YYYY-MM}}` and `Month 2026-10` make `Month 2026-10`. An HTML comment right under a heading is that heading's prompt, drawn in the note instead of copied into it. |
-| **Remember the last template** | On, the template you picked last is offered first. Off, `Default` is offered first and the rest by name, for a vault where one template is the usual answer. |
-| **Unfiled tag** | The tag written on a note that has not answered everything, and the name of the inbox block's first group (its last segment, capitalised). Empty writes none, for a vault that would rather query than browse. |
-| **Axes** | What a note has to answer. A namespace and its values. The picker offers the values you picked most recently first, then the rest in the order given here. |
-
-The loop is not a setting. Capture without classifying, then classify, with
-something visible that will not let you forget: that is the product. Making it
-configurable would turn it into a rules engine that asks you to invent a filing
-system before you can use one, which is what Dataview already is.
-
-## Safety
-
-Loose Ends writes two things and no others: the value you pick on the axis you
-picked it for, and the unfiled tag. Every other frontmatter key, every other
-tag, and every word you wrote are yours and are passed through untouched.
-
-It never writes outside the notes folder, runs no commands, and talks to
-nothing. The one exception is on a fresh install: it puts a starter template,
-`Default.md`, in the template folder, unless a file by that name is already
-there. Edit it or delete it; it is not written again.
-
-## Requirements
-
-Obsidian 1.13 or later.
-
-## Installation
-
-Download `main.js`, `manifest.json` and `styles.css` from the latest release
-into `.obsidian/plugins/loose-ends/` in your vault, then enable **Loose Ends**
-under Settings → Community plugins.
-
-## Development
+Every push is built, linted with [ESLint](https://eslint.org/) and the official
+[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
+tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
+built by GitHub Actions from the tagged source, with every action pinned to an
+exact version, and come with a signed build provenance attestation, so you can
+check that the file you installed is the one that was built:
 
 ```sh
-nix develop     # or any Node.js 20+
-npm install
-npm run dev
-npm test
-npm run lint
+gh attestation verify main.js --repo jorritvanderheide/obsidian-loose-ends
 ```
 
-`src/core/` is pure and holds every decision, with a test named after each file.
-`src/commands/` and `src/ui/` wire that to Obsidian.
+<br/>
 
-## License
+## Table of contents
 
-[EUPL-1.2](LICENSE)
+- [4 Documentation](#4-documentation)
+- [5 Features](#5-features)
+- [6 How it works](#6-how-it-works)
+- [7 Templates](#7-templates)
+- [8 Commands](#8-commands)
+- [9 Settings](#9-settings)
+- [10 Works well with](#10-works-well-with)
+- [11 Network and file disclosure](#11-network-and-file-disclosure)
+- [12 Questions or issues?](#12-questions-or-issues)
+- [13 Support](#13-support)
+- [14 License](#14-license)
+
+<br/>
+
+## 4 Documentation
+
+If you want to work on the plugin:
+
+- [**Architecture**](docs/architecture.md) - How the code is layered, and how
+  the unfiled tag is kept up to date without the plugin triggering itself.
+- [**Filing model**](docs/filing-model.md) - What "filed" means, why values are
+  compared exactly, and what the notes folder is for.
+- [**Templates**](docs/templates.md) - Placeholders, dates in names, prompts,
+  and how a note is matched to its template.
+- [**Settings**](docs/settings.md) - How settings are stored and checked, and
+  what to do when one changes.
+- [**Development**](docs/development.md) - Setup, tests, checks and releases.
+
+<br/>
+
+## 5 Features
+
+### 5.1 Writing
+
+- **Add note** - One prompt for the name and the template, and nothing else.
+- **Templates** - Any note in your template folder, with `{{title}}`,
+  `{{date}}` and `{{cursor}}`.
+- **Dates in names** - A template can put today's date in the note's name, or
+  the date you type.
+- **Prompts that stay out of your note** - A question under a template's
+  heading is drawn in the note, and never written to the file.
+
+### 5.2 Filing
+
+- **File note** - Asks only what a note is still missing, one question at a
+  time, with your most recent answers first.
+- **Set an answer later** - One **Set** command per axis, to change an answer
+  at any time.
+- **Right-click** - File a note from its menu, in the file explorer or anywhere
+  else Obsidian offers one.
+- **Stop halfway** - Close a question, and the answers you already gave are
+  kept.
+
+### 5.3 The inbox
+
+- **Inbox block** - A list of every note still missing something, on any note
+  you like, with what each one is missing on hover.
+- **One-click filing** - File a note straight from its row.
+- **Recently filed** - The notes you filed in the last seven days.
+
+### 5.4 Staying honest
+
+- **A tag that can't go stale** - The unfiled tag is worked out from the note's
+  own tags every time. Delete it by hand and it comes back; answer the last
+  question and it goes.
+- **Exact answers** - Only the values you listed count, so a typo or an old
+  tag never quietly passes as filed.
+- **Only your notes** - Nothing outside your notes folder is ever tagged.
+
+<br/>
+
+## 6 How it works
+
+### 6.1 Axes
+
+An **axis** is a question every note has to answer, and the answer is a tag.
+`domain` asks what a note is about, and accepts `domain/work` or
+`domain/personal`. `source` asks where it came from, and accepts
+`source/article`, `source/book` or `source/meeting`. You choose the axes and
+the answers they accept:
+
+```
+domain   work, personal
+source   article, book, meeting
+```
+
+A note that has an answer for every axis is **filed**. A note that's missing
+one is **unfiled**, and gets the tag you named for that, such as `inbox`.
+
+Only the tags in a note's `tags` property count as answers. Loose Ends writes
+them there too.
+
+### 6.2 The unfiled tag is worked out, not stored
+
+The unfiled tag isn't a record of anything. It's worked out from the note's own
+tags every time the note changes, and only written so that you can see it, for
+example as a folder in a tag tree. **Your answers are the record.**
+
+That's why it can't go stale. Delete the tag by hand, and it comes back.
+Answer the last question, and it goes. Change the axes, and every note in the
+notes folder is checked again when you close the settings.
+
+### 6.3 Values are compared exactly
+
+`domain/work/project-x` doesn't answer the `domain` axis, and neither does a
+bare `domain`. Only `domain/work` and `domain/personal` do, because those are
+the values you listed. If you want `work/project-x` as an answer, add it to the
+list: a value can have a slash in it like any other.
+
+When Loose Ends asks about an axis, the question names any tag under it that
+isn't one of its values, and picking a value replaces it. Nothing else ever
+touches it.
+
+This is on purpose, and it's the bug this plugin was written after. Its
+predecessor accepted anything that *started with* `domain/`, so a nested tag
+passed as an answer while no picker would ever offer it. The only way to make
+one was typing it by hand, which made the first typo a matter of time, and one
+that didn't show up until the tag tree came apart.
+
+### 6.4 The notes folder
+
+The **Notes folder** does two jobs: it's where **Add note** makes new notes,
+and it's the only place Loose Ends ever writes the unfiled tag. Keep it narrow
+if other plugins own some of your notes, like a folder of literature notes:
+those will never answer your axes, so without the folder they'd stay unfiled
+forever.
+
+<br/>
+
+## 7 Templates
+
+**Add note** offers every Markdown file directly in your template folder. On a
+fresh install, Loose Ends puts a `Default` template there to start with.
+
+| Placeholder | Becomes |
+| --- | --- |
+| `{{title}}` | The name you typed |
+| `{{date}}` | Today's date, as `YYYY-MM-DD` |
+| `{{date:YYYY-MM}}`, `{{date:YYYY}}` | The same date, cut short, so it still sorts |
+| `{{cursor}}` | Where the cursor starts |
+
+Case and spaces inside the braces don't matter.
+
+**Dates in names.** When the title heading has a date in it, like
+`# {{title}} {{date}}`, the note's name gets the date too: typing `Hanna` makes
+`Hanna 2026-09-30`. If you type a date yourself, that date is used instead of
+today's, so `Hanna 2026-10-07` stays `Hanna 2026-10-07`, for a meeting you
+prepare before the day. A heading dated to the month also takes a typed month:
+`# {{title}} {{date:YYYY-MM}}` and `Budget 2026-10` make `Budget 2026-10`.
+
+**Prompts.** Put an HTML comment right under a heading, and it becomes that
+heading's prompt:
+
+```markdown
+## Decisions
+
+<!-- What did we agree on, and who does what? -->
+```
+
+**Add note** leaves the comment out of the note. Instead, the question is shown
+faintly on the empty line under the heading, until you write something there.
+Because it only lives in the template, rewording it rewords it in every note,
+and nothing stays behind under what you wrote.
+
+A note is matched to its template by its headings. A template with no heading
+besides its title can't be recognised, so its prompts are never shown.
+
+<!-- SCREENSHOT images/prompts.png: a meeting note made from a template, with a faint prompt under an empty "Decisions" heading and text already written under "Notes". -->
+![Prompts](https://placehold.co/900x500/png?text=Prompts+under+headings)
+
+<br/>
+
+## 8 Commands
+
+None of the commands has a hotkey, so you can choose your own in Settings →
+Hotkeys.
+
+- `Loose Ends: Add note` - Asks for a name and a template, and makes the note
+  in your notes folder.
+- `Loose Ends: File note` - Asks for each answer the open note is still
+  missing.
+- `Loose Ends: Set <axis>` - Changes one answer on the open note, whether or
+  not it already had one. There's one for each axis, named after it.
+- `Loose Ends: Refresh tags` - Checks every note in your notes folder against
+  the axes. This also runs by itself when the axes change.
+
+**File note** and **Set** are also on the right-click menu of every note in the
+notes folder: **File note** while the note is still missing something, and
+**Set** always.
+
+<br/>
+
+## 9 Settings
+
+| Setting | Default | |
+| --- | --- | --- |
+| **Notes folder** | Whole vault | Where a new note is made, and the only folder Loose Ends tags. See [The notes folder](#64-the-notes-folder). |
+| **Template folder** | `Templates` | The templates **Add note** offers. See [Templates](#7-templates). |
+| **Remember the last template** | On | Offer the template you picked last first. Off offers `Default` first, then the rest by name, for when one template is the usual answer. |
+| **Unfiled tag** | Empty | The tag written on a note that's still missing an answer, and the name of the inbox block's first group. Leave it empty for no tag. |
+| **Axes** | None | What a note has to answer. Each axis is a top-level tag (the settings call it the namespace) and the values it accepts. The pickers offer your most recent answers first, then the rest in the order you listed them. |
+
+**Refresh tags** is at the bottom of the settings too.
+
+<br/>
+
+## 10 Works well with
+
+These plugins are by the same author. Each does one thing, and Loose Ends
+doesn't need the other, but they fit together nicely.
+
+### 10.1 Tag Along
+
+[Tag Along](https://community.obsidian.md/plugins/tag-along) shows your vault
+as a folder tree built from your tags. Each axis becomes a tree, like `domain`
+and `source`, and the unfiled tag becomes a folder of everything still waiting.
+
+Set **Unfiled tag** to `inbox`, and make `inbox` an exclusive folder in Tag
+Along: a new note then shows up in `inbox` only, and moves to its proper
+folders the moment you've finished filing it.
+
+<!-- SCREENSHOT images/tag-along.png: Tag Along with an exclusive "inbox" folder at the top holding two unfiled notes, and domain and source trees below. -->
+![Loose Ends with Tag Along](https://placehold.co/900x500/png?text=Inbox+in+Tag+Along)
+
+<br/>
+
+## 11 Network and file disclosure
+
+Loose Ends runs entirely on your device. It never connects to the internet and
+doesn't send anything anywhere.
+
+### 11.1 What it reads
+
+- **Notes:** The `tags` property of the notes in your notes folder, which it
+  gets from Obsidian's own index of your notes, and the headings of the note
+  you're editing, to show its prompts.
+- **Templates:** The Markdown files in your template folder, for **Add note**
+  and the prompts.
+
+### 11.2 What it changes in your notes
+
+Only in notes in your notes folder, and only these:
+
+- **Answers:** The tag you pick when it asks about an axis, in the note's
+  `tags` property. Any other tag under that axis is replaced.
+- **The unfiled tag:** Added when a note is missing an answer, and taken off
+  when it isn't.
+- **New notes:** **Add note** makes the note you ask for.
+
+When it adds a tag, it keeps the `tags` list sorted, the way the Linter plugin
+does, so your next save doesn't show a change nobody made. The tags
+themselves stay as they are.
+
+### 11.3 What it stores
+
+- **Starter template:** On a fresh install, `Default.md` in the template
+  folder, unless a file with that name is already there. If you delete it, it
+  isn't written again.
+- **Settings:** Its own `data.json` in the plugin folder.
+- **Recent picks:** The order you last picked templates in, and the answers for
+  each axis, so your usual choice comes first.
+- **Filing dates:** When each note was filed, for **Recently filed**.
+
+Recent picks and filing dates are habits rather than settings, so they're kept
+in Obsidian's local storage for this vault, and don't sync to your other
+devices.
+
+<br/>
+
+## 12 Questions or issues?
+
+Have a look at the [FAQ](FAQ.md) first: it covers the most common surprises,
+like an unfiled tag that keeps coming back. If something still doesn't work, or
+you have an idea, please
+[open an issue](https://github.com/jorritvanderheide/obsidian-loose-ends/issues/new/choose).
+Found a security problem? Please report it privately, as described in the
+[security policy](SECURITY.md).
+
+The source lives on [Codeberg](https://codeberg.org/BW20/obsidian-loose-ends)
+and is mirrored to [GitHub](https://github.com/jorritvanderheide/obsidian-loose-ends).
+
+<br/>
+
+## 13 Support
+
+Loose Ends is free. If you find it useful, you can support its development on
+Liberapay:
+
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
+
+<br/>
+
+## 14 License
+
+Copyright © 2026 Jorrit van der Heide. Licensed under the [EUPL-1.2](LICENSE).
