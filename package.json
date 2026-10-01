@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-loose-ends",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"description": "Write notes now and tag them later, with an inbox of the notes still waiting for tags.",
 	"main": "main.js",
 	"type": "module",
