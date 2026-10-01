@@ -125,6 +125,9 @@ If you want to work on the plugin:
 ### 5.1 Writing
 
 - **Add note** - One prompt for the name and the template, and nothing else.
+- **Or any other way** - A note made with Obsidian's new note button, as a daily
+  note, or with Templater or QuickAdd gets the unfiled tag too, as long as it's
+  in your notes folder.
 - **Templates** - Any note in your template folder, with `{{title}}`,
   `{{date}}` and `{{cursor}}`.
 - **Dates in names** - A template can put today's date in the note's name, or

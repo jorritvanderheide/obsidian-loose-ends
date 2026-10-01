@@ -10,6 +10,14 @@ Can't find your answer here? Please
 
 ## Filing
 
+### Do I have to make my notes with Add note?
+
+No. Any note in your notes folder counts, however you made it: with Obsidian's
+new note button, as a daily note, or with Templater or QuickAdd. It gets the
+unfiled tag as soon as Obsidian has read it, and **File note** works on it like
+on any other. **Add note** is just the quickest way to a note with a name and a
+template.
+
 ### The unfiled tag keeps coming back
 
 That's on purpose. The unfiled tag is worked out from the note's own tags every
