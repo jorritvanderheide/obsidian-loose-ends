@@ -31,8 +31,8 @@ away by itself.
 
 ## 1 Installation
 
-Go to Settings → Community plugins → Browse in Obsidian, search for "Loose
-Ends", then install and enable it. You can also open
+Install Loose Ends in Obsidian: go to Settings → Community plugins → Browse,
+search for "Loose Ends", then install and enable it. You can also open
 [its page in the plugin directory](https://community.obsidian.md/plugins/loose-ends).
 
 Loose Ends needs Obsidian 1.13 or later, and works on desktop and mobile.
