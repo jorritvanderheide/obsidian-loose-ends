@@ -14,8 +14,7 @@ which shows your tags as a folder tree. See
 [![Checks](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/lint.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/lint.yml)
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)](LICENSE)
 
-<!-- SCREENSHOT images/hero.png: a dashboard note with the inbox block showing a few unfiled notes, one with its "File note" tag button on hover, next to a freshly made note being written. -->
-![Loose Ends](https://placehold.co/1200x675/png?text=Inbox+block+next+to+a+new+note)
+![The inbox block in a note, listing ten notes that still need tags, with the File note button on the first](https://raw.githubusercontent.com/jorritvanderheide/obsidian-loose-ends/main/images/hero.png)
 
 You're in a meeting, or halfway through an article, and a thought comes up.
 Before you can write it down, you have to decide where it goes: which folder,
@@ -67,8 +66,8 @@ Loose Ends does nothing until you tell it what a note needs. So:
    answered both, the `inbox` tag is gone and the note moves to **Recently
    filed**.
 
-<!-- SCREENSHOT images/file-note.gif: the File note question "Which domain?" with work and personal offered, then "Which source?", then the note leaving the inbox block. -->
-![Filing a note](https://placehold.co/900x500/png?text=Filing+a+note)
+<!-- SCREENSHOT images/file-note.gif, to replace file-note.png: the File note question "Which domain?", pick one, then "Which source?", then the note leaving the inbox block. -->
+![File note asking which domain the note Book tip from Sam belongs to](https://raw.githubusercontent.com/jorritvanderheide/obsidian-loose-ends/main/images/file-note.png)
 
 <br/>
 
@@ -232,6 +231,8 @@ forever.
 **Add note** offers every Markdown file directly in your template folder. On a
 fresh install, Loose Ends puts a `Default` template there to start with.
 
+![Add note asking for a name and a template, with the templates that add the date to the name marked](https://raw.githubusercontent.com/jorritvanderheide/obsidian-loose-ends/main/images/add-note.png)
+
 | Placeholder | Becomes |
 | --- | --- |
 | `{{title}}` | The name you typed |
@@ -265,8 +266,7 @@ and nothing stays behind under what you wrote.
 A note is matched to its template by its headings. A template with no heading
 besides its title can't be recognised, so its prompts are never shown.
 
-<!-- SCREENSHOT images/prompts.png: a meeting note made from a template, with a faint prompt under an empty "Decisions" heading and text already written under "Notes". -->
-![Prompts](https://placehold.co/900x500/png?text=Prompts+under+headings)
+<!-- SCREENSHOT images/prompts.png: a note made from the Meeting template, with a line written under Preparation and faint prompts under the empty Discussed and Agreed headings. -->
 
 <br/>
 
@@ -319,8 +319,7 @@ Set **Unfiled tag** to `inbox`, and make `inbox` an exclusive folder in Tag
 Along: a new note then shows up in `inbox` only, and moves to its proper
 folders the moment you've finished filing it.
 
-<!-- SCREENSHOT images/tag-along.png: Tag Along with an exclusive "inbox" folder at the top holding two unfiled notes, and domain and source trees below. -->
-![Loose Ends with Tag Along](https://placehold.co/900x500/png?text=Inbox+in+Tag+Along)
+![Tag Along with the inbox folder at the top, holding the notes that still need tags, and the domain tree below](https://raw.githubusercontent.com/jorritvanderheide/obsidian-loose-ends/main/images/tag-along.png)
 
 <br/>
 
