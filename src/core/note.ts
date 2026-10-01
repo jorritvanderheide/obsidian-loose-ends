@@ -34,6 +34,6 @@ export function titleProblem(title: string, folder: string, exists: (path: strin
 /** What to say about each problem, in the prompt, where a result would be. */
 export function titleMessage(problem: TitleProblem): string {
 	if (problem === 'empty') return 'A note needs a name.';
-	if (problem === 'illegal') return 'A name cannot contain \\ / : * ? " < > or |.';
-	return 'A note by that name is already here.';
+	if (problem === 'illegal') return 'A name can\'t contain \\ / : * ? " < > or |.';
+	return "There's already a note with that name here.";
 }

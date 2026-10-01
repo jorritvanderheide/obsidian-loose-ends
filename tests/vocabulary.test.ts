@@ -51,13 +51,13 @@ describe('questionFor', () => {
 
 	it('names a stray tag, and says picking replaces it', () => {
 		expect(questionFor(domain, ['domain/phd/wp1', 'source/ai'])).toBe(
-			"Which domain? domain/phd/wp1 isn't one of them, and picking one replaces it.",
+			"Which domain? domain/phd/wp1 isn't one of its values, and picking one replaces it.",
 		);
 	});
 
 	it('names every stray tag', () => {
 		expect(questionFor(domain, ['domain/phd/wp1', 'domain/coding'])).toBe(
-			"Which domain? domain/phd/wp1, domain/coding aren't among them, and picking one replaces them.",
+			"Which domain? domain/phd/wp1, domain/coding aren't among its values, and picking one replaces them.",
 		);
 	});
 });

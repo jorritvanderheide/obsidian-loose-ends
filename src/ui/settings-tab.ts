@@ -21,28 +21,28 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 		return [
 			{
 				name: 'Notes folder',
-				desc: 'Where a new note is made, and the only folder Loose Ends tags. Empty means the whole vault.',
+				desc: 'Where Add note makes new notes, and the only folder where Loose Ends adds tags. Leave it empty for the whole vault.',
 				control: { type: 'folder', key: 'notesFolder' },
 			},
 			{
 				name: 'Template folder',
-				desc: 'Markdown files here are offered when a note is made. {{title}} becomes the name of the note, {{date}} the date as YYYY-MM-DD ({{date:YYYY-MM}} or {{date:YYYY}} for less of it), and the cursor starts at {{cursor}}. A title heading with {{date}} in it puts the date in the name too, unless a date was typed. A comment right under a heading is drawn in the note as a prompt, not copied.',
+				desc: "The templates Add note offers: every Markdown file in this folder. {{title}} becomes the note's name, {{date}} today's date as YYYY-MM-DD ({{date:YYYY-MM}} or {{date:YYYY}} for less of it), and the cursor starts at {{cursor}}. A title heading with {{date}} in it puts the date in the note's name too, unless you type a date yourself. An HTML comment right under a heading becomes that heading's prompt: it's shown in the note, not copied into it.",
 				control: { type: 'folder', key: 'templateFolder' },
 			},
 			{
 				name: 'Remember the last template',
-				desc: 'Offer the template picked last first. Off offers Default first, then the rest by name.',
+				desc: "Offer the template you picked last first. When it's off, Default comes first, then the rest by name.",
 				control: { type: 'toggle', key: 'rememberTemplate' },
 			},
 			{
 				name: 'Unfiled tag',
-				desc: 'Written on a note that has not answered every axis, and taken off when it has. It is what gives a tag tree a folder of them. Empty writes none.',
+				desc: "Added to a note that's still missing an answer, and taken off once it has them all. It's what gives a tag tree a folder of everything still waiting. Leave it empty for no tag.",
 				control: { type: 'text', key: 'unfiledTag', placeholder: 'status/unfiled' },
 			},
 			{
 				type: 'page',
 				name: 'Axes',
-				desc: 'What a note has to answer before it counts as filed. One tag namespace each, with the values it accepts. Values are compared exactly, so a tag not in the list, nested or not, never counts as an answer.',
+				desc: "The questions a note has to answer before it counts as filed. Each axis is a top-level tag, like domain, with the values it accepts, like work and personal. Values are compared exactly, so a tag that isn't in the list, nested or not, never counts as an answer.",
 				displayValue: () => countLabel(settings.axes.length),
 				items: [
 					{
@@ -64,14 +64,14 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 							render: (setting) => {
 								setting
 									.addText((text) =>
-										text.setPlaceholder('Namespace').setValue(axis.namespace).onChange(async (value) => {
+										text.setPlaceholder('Top-level tag, like domain').setValue(axis.namespace).onChange(async (value) => {
 											axis.namespace = normaliseNamespace(value);
 											await this.plugin.saveSettings();
 										}),
 									)
 									.addText((text) =>
 										text
-											.setPlaceholder('Value, value, value')
+											.setPlaceholder('Values, like work, personal')
 											.setValue(axis.values.join(', '))
 											.onChange(async (value) => {
 												axis.values = value
@@ -88,7 +88,7 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Refresh tags',
-				desc: 'Check every note in the notes folder against the axes. This runs by itself when an axis is removed, and when settings close after the axes changed.',
+				desc: 'Check every note in the notes folder against the axes. This also runs by itself when you remove an axis, and when you close the settings after changing the axes.',
 				action: () => void this.plugin.sweep(),
 			},
 		];

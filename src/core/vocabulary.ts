@@ -63,7 +63,7 @@ export function questionFor(axis: Axis, tags: readonly string[]): string {
 	const asked = `Which ${axis.namespace}?`;
 	const strays = strayTags(axis, tags);
 	if (strays.length === 0) return asked;
-	const them = strays.length === 1 ? "isn't one of them" : "aren't among them";
+	const them = strays.length === 1 ? "isn't one of its values" : "aren't among its values";
 	return `${asked} ${strays.join(', ')} ${them}, and picking one replaces ${strays.length === 1 ? 'it' : 'them'}.`;
 }
 

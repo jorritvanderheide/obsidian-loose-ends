@@ -294,11 +294,11 @@ notes folder: **File note** while the note is still missing something, and
 
 | Setting | Default | |
 | --- | --- | --- |
-| **Notes folder** | Whole vault | Where a new note is made, and the only folder Loose Ends tags. See [The notes folder](#64-the-notes-folder). |
+| **Notes folder** | Whole vault | Where **Add note** makes new notes, and the only folder where Loose Ends adds tags. See [The notes folder](#64-the-notes-folder). |
 | **Template folder** | `Templates` | The templates **Add note** offers. See [Templates](#7-templates). |
-| **Remember the last template** | On | Offer the template you picked last first. Off offers `Default` first, then the rest by name, for when one template is the usual answer. |
+| **Remember the last template** | On | Offer the template you picked last first. When it's off, `Default` comes first, then the rest by name, for when one template is the usual answer. |
 | **Unfiled tag** | Empty | The tag written on a note that's still missing an answer, and the name of the inbox block's first group. Leave it empty for no tag. |
-| **Axes** | None | What a note has to answer. Each axis is a top-level tag (the settings call it the namespace) and the values it accepts. The pickers offer your most recent answers first, then the rest in the order you listed them. |
+| **Axes** | None | What a note has to answer. Each axis is a top-level tag and the values it accepts. The pickers offer your most recent answers first, then the rest in the order you listed them. |
 
 **Refresh tags** is at the bottom of the settings too.
 

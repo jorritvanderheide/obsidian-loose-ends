@@ -49,7 +49,7 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 /** File a note: the one given, or the one open. */
 export async function fileNote(context: Context, target?: TFile): Promise<void> {
 	if (activeAxes(context.settings).length === 0) {
-		new Notice('Loose Ends has no axes yet. Add one in its settings to say what a note is filed by.');
+		new Notice('Loose Ends has no axes yet. Add one in its settings to say what every note needs.');
 		return;
 	}
 	const file = target ?? activeNote(context.app, context.settings);
@@ -61,7 +61,7 @@ export async function fileNote(context: Context, target?: TFile): Promise<void> 
 	const tags = readTags(cachedTags(context.app, file));
 	const missing = missingAxes(activeAxes(context.settings), tags);
 	if (missing.length === 0) {
-		new Notice('Already filed.');
+		new Notice('This note is already filed.');
 		return;
 	}
 

@@ -81,7 +81,7 @@ export async function addNote(context: Context): Promise<void> {
 			),
 		);
 	} catch (error) {
-		new Notice(`Loose Ends could not read the templates: ${error instanceof Error ? error.message : String(error)}`);
+		new Notice(`Loose Ends couldn't read the templates: ${error instanceof Error ? error.message : String(error)}`);
 		return;
 	}
 	const textOf = (choice: Choice) => (choice.kind === 'template' ? (texts.get(choice.file.path) ?? '') : '');
@@ -125,6 +125,6 @@ export async function addNote(context: Context): Promise<void> {
 			editor.focus();
 		}
 	} catch (error) {
-		new Notice(`Loose Ends could not make that note: ${error instanceof Error ? error.message : String(error)}`);
+		new Notice(`Loose Ends couldn't make that note: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }

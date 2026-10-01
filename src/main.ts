@@ -192,7 +192,7 @@ export default class LooseEndsPlugin extends Plugin {
 		this.watch.reset();
 		const changed = await sweepMirror(this.app, this.settings);
 		if (quiet) return;
-		new Notice(changed === 0 ? 'Every note was already right.' : `Updated ${changed} note${changed === 1 ? '' : 's'}.`);
+		new Notice(changed === 0 ? "Every note's tags were already up to date." : `Updated the tags on ${changed} note${changed === 1 ? '' : 's'}.`);
 	}
 
 	async saveSettings(): Promise<void> {
