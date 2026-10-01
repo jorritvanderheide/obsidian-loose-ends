@@ -1,0 +1,29 @@
+name: Feature request
+description: An idea for something Loose Ends could do, or do better.
+labels: ['enhancement']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for sharing your idea. Loose Ends is deliberately small: write now, file later, and a tag that won't let you forget. So it helps most to hear what you're trying to get done, more than how you'd build it.
+
+    - type: textarea
+      id: goal
+      attributes:
+          label: What are you trying to do?
+          description: How you write and file notes, and the moment this came up.
+      validations:
+          required: true
+
+    - type: textarea
+      id: problem
+      attributes:
+          label: What gets in the way today?
+      validations:
+          required: true
+
+    - type: textarea
+      id: idea
+      attributes:
+          label: What would help?
+          description: Optional. If you have a picture of how it could work, describe it here.
