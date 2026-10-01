@@ -9,7 +9,8 @@ npm run dev     # rebuild on change
 ```
 
 To try it in a vault, copy or link `main.js`, `manifest.json` and `styles.css`
-into `<vault>/.obsidian/plugins/loose-ends/` and reload Obsidian.
+into `<vault>/.obsidian/plugins/loose-ends/` and reload Obsidian, or turn the
+plugin off and on again.
 
 ## Checks
 
