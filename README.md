@@ -82,16 +82,9 @@ writes and when.
 
 It doesn't connect to the internet and doesn't run any programs.
 
-Every push is built, linted with [ESLint](https://eslint.org/) and the official
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
-tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
-built by GitHub Actions from the tagged source, with every action pinned to an
-exact version, and come with a signed build provenance attestation, so you can
-check that the file you installed is the one that was built:
-
-```sh
-gh attestation verify main.js --repo jorritvanderheide/obsidian-loose-ends
-```
+Every push is tested, and every release is built in the open with a signed
+attestation, so you can check that the file you installed is the one that was
+built. [Section 11.4](#114-how-releases-are-built) says how.
 
 <br/>
 
@@ -363,6 +356,19 @@ themselves stay as they are.
 Recent picks and filing dates are habits rather than settings, so they're kept
 in Obsidian's local storage for this vault, and don't sync to your other
 devices.
+
+### 11.4 How releases are built
+
+Every push is built, linted with [ESLint](https://eslint.org/) and the official
+[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
+tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
+built by GitHub Actions from the tagged source, with every action pinned to an
+exact version, and come with a signed build provenance attestation, so you can
+check that the file you installed is the one that was built:
+
+```sh
+gh attestation verify main.js --repo jorritvanderheide/obsidian-loose-ends
+```
 
 <br/>
 
