@@ -7,7 +7,12 @@
   };
 
   outputs =
-    { nixpkgs, flake-utils, ... }:
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
@@ -21,13 +26,17 @@
           inherit (package) version;
           src = ./.;
           # Update with: nix run nixpkgs#prefetch-npm-deps -- package-lock.json
-          npmDepsHash = "sha256-Tx/DyFJvMm5efUkkP6UZMvRYVmeWKQhMi2fY0+Qp3CI=";
+          npmDepsHash = "sha256-TNt5cH4ZwGAKybpf8c32HIEeTFv+8TJT7+t+JtrndC8=";
           nodejs = pkgs.nodejs_24;
           installPhase = ''
             mkdir -p $out
             cp main.js manifest.json styles.css $out/
           '';
         };
+
+        # CI runs nix flake check, which builds this, so npmDepsHash can't fall
+        # behind package-lock.json unnoticed.
+        checks.default = self.packages.${system}.default;
 
         devShells.default = pkgs.mkShell {
           buildInputs = [ pkgs.nodejs_24 ];
