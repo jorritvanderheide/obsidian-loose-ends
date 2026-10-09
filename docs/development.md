@@ -35,14 +35,19 @@ feature.
 
 ## Releasing
 
-1. Bump the version: `npm version <x.y.z>` updates `manifest.json` and
-   `versions.json`.
-2. Push the commit and a tag named for the version, without a `v`, to Codeberg.
-   That is the only remote: GitHub mirrors it.
-3. When the tag reaches GitHub, `.github/workflows/release.yml` builds it,
-   attests `main.js` and `styles.css`, and creates a **draft** GitHub release
-   with them attached.
-4. Publish the draft. Obsidian's community directory installs from GitHub
+1. **Write the notes.** Rename `## Unreleased` in `CHANGELOG.md` to the new
+   version.
+2. **Bump the version:** `npm version <x.y.z>` updates `manifest.json` and
+   `versions.json`. A version like `1.2.0-beta.1` becomes a pre-release, for
+   beta testers.
+3. **Push** the commit and a tag named for the version, without a `v`, to
+   Codeberg. That is the only remote: GitHub mirrors it.
+4. When the tag reaches GitHub, `.github/workflows/release.yml` runs the CI
+   checks, makes sure the tag is the version in `manifest.json`, `package.json`
+   and `versions.json`, builds it, attests `main.js` and `styles.css`, and creates a **draft**
+   GitHub release named like "Loose Ends 1.5.1", with the version's part of
+   `CHANGELOG.md` as its notes.
+5. **Publish the draft.** Obsidian's community directory installs from GitHub
    releases, and a tag alone is not one.
 
 Before releasing anything that renames a setting, see
