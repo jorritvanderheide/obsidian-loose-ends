@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeAxes, DEFAULT_SETTINGS, loadSettings, readAxes, SETTINGS_VERSION } from '../src/core/settings';
+import { activeAxes, DEFAULT_SETTINGS, loadSettings, readAxes, SETTINGS_VERSION, type Settings } from '../src/core/settings';
 
 describe('readAxes', () => {
 	it('reads a well formed axis', () => {
@@ -83,5 +83,68 @@ describe('loadSettings', () => {
 		expect(loadSettings({}).rememberTemplate).toBe(true);
 		expect(loadSettings({ rememberTemplate: 'no' }).rememberTemplate).toBe(true);
 		expect(loadSettings({ rememberTemplate: false }).rememberTemplate).toBe(false);
+	});
+});
+
+describe('settings saved by released versions', () => {
+	// data.json as released versions saved it, named after the release, and what
+	// it loads as now. Add a fixture whenever a release changes what is saved:
+	// a key added, renamed or removed, or a value that means something new.
+	const released: Record<string, { saved: unknown; loaded: Settings }> = {
+		// Saved by 1.0.0 to 1.1.1. Values were only trimmed when typed until
+		// 1.1.0, and "Add axis" saves an axis before it is typed out.
+		'1.0.0': {
+			saved: {
+				version: 1,
+				notesFolder: 'Notes',
+				templateFolder: 'Templates',
+				axes: [
+					{ namespace: 'domain', values: ['phd', 'vault/', 'phd//wp1'] },
+					{ namespace: 'source', values: ['article', 'book'] },
+					{ namespace: '', values: [] },
+				],
+				unfiledTag: 'status/unfiled',
+			},
+			loaded: {
+				version: 1,
+				notesFolder: 'Notes',
+				templateFolder: 'Templates',
+				rememberTemplate: true,
+				axes: [
+					{ namespace: 'domain', values: ['phd', 'vault', 'phd/wp1'] },
+					{ namespace: 'source', values: ['article', 'book'] },
+				],
+				unfiledTag: 'status/unfiled',
+			},
+		},
+		// Saved by 1.2.0 to 1.5.1: rememberTemplate was added in 1.2.0.
+		'1.5.1': {
+			saved: {
+				version: 1,
+				notesFolder: 'Notes',
+				templateFolder: 'Templates',
+				rememberTemplate: false,
+				axes: [
+					{ namespace: 'domain', values: ['work', 'personal', 'work/project-x'] },
+					{ namespace: 'source', values: ['article', 'book', 'meeting'] },
+				],
+				unfiledTag: 'inbox',
+			},
+			loaded: {
+				version: 1,
+				notesFolder: 'Notes',
+				templateFolder: 'Templates',
+				rememberTemplate: false,
+				axes: [
+					{ namespace: 'domain', values: ['work', 'personal', 'work/project-x'] },
+					{ namespace: 'source', values: ['article', 'book', 'meeting'] },
+				],
+				unfiledTag: 'inbox',
+			},
+		},
+	};
+
+	it.each(Object.entries(released))('loads what %s saved', (_release, { saved, loaded }) => {
+		expect(loadSettings(saved)).toEqual(loaded);
 	});
 });

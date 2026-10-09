@@ -50,7 +50,9 @@ feature.
 5. **Publish the draft.** Obsidian's community directory installs from GitHub
    releases, and a tag alone is not one.
 
-Before releasing anything that renames a setting, see
+Before releasing, check the changes against
+[Compatibility](compatibility.md), which says what a minor or patch release
+may not change. Before releasing anything that renames a setting, see
 [Settings](settings.md#changing-the-shape).
 
 ## Updating an action

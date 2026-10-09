@@ -116,6 +116,8 @@ If you want to work on the plugin:
   and how a note is matched to its template.
 - [**Settings**](docs/settings.md) - How settings are stored and checked, and
   what to do when one changes.
+- [**Compatibility**](docs/compatibility.md) - What a release may and may not
+  change, so notes, templates and settings keep working across updates.
 - [**Development**](docs/development.md) - Setup, tests, checks and releases.
 
 <br/>
@@ -344,7 +346,9 @@ Only in notes in your notes folder, and only these:
 
 When it adds a tag, it keeps the `tags` list sorted, the way the Linter plugin
 does, so your next save doesn't show a change nobody made. The tags
-themselves stay as they are.
+themselves stay as they are, but the property is written back as a plain list:
+a comma or space separated string becomes a list, a leading `#` is dropped, and
+a tag that was there twice is kept once.
 
 ### 11.3 What it stores
 
