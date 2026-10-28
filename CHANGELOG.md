@@ -3,7 +3,7 @@
 What changed in each release of Loose Ends, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
-## Unreleased
+## 1.5.2
 
 - File note and the Set commands no longer say a note is outside the notes folder when no note is open at all. That case now says "There's no note open to file.", and a note outside the folder says so in its own message.
 - The Unfiled tag setting suggests `inbox`, the tag the README uses, instead of `status/unfiled`.
