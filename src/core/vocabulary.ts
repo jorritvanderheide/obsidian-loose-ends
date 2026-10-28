@@ -63,8 +63,8 @@ export function questionFor(axis: Axis, tags: readonly string[]): string {
 	const asked = `Which ${axis.namespace}?`;
 	const strays = strayTags(axis, tags);
 	if (strays.length === 0) return asked;
-	const them = strays.length === 1 ? "isn't one of its values" : "aren't among its values";
-	return `${asked} ${strays.join(', ')} ${them}, and picking one replaces ${strays.length === 1 ? 'it' : 'them'}.`;
+	const them = strays.length === 1 ? "isn't one of the values you listed" : "aren't among the values you listed";
+	return `${asked} ${strays.join(', ')} ${them}, and the one you pick replaces ${strays.length === 1 ? 'it' : 'them'}.`;
 }
 
 /** A namespace as it is stored: no `#`, no slashes, no surrounding space. */

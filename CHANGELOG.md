@@ -3,6 +3,12 @@
 What changed in each release of Loose Ends, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
+## Unreleased
+
+- File note and the Set commands no longer say a note is outside the notes folder when no note is open at all. That case now says "There's no note open to file.", and a note outside the folder says so in its own message.
+- The Unfiled tag setting suggests `inbox`, the tag the README uses, instead of `status/unfiled`.
+- Plainer wording in the settings tab, the question about a stray tag, the inbox block's tooltips, the README, the FAQ and the security policy.
+
 ## 1.5.1
 
 - Recently filed says when a note was filed without Obsidian's bundled moment library, and always in English, like the rest of the inbox block.

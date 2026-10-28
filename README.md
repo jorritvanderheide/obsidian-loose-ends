@@ -18,9 +18,9 @@ which shows your tags as a folder tree. See
 
 You're in a meeting, or halfway through an article, and a thought comes up.
 Before you can write it down, you have to decide where it goes: which folder,
-which tags. That's the worst possible moment to decide, because you still have
-the thought. So either you stop to sort it and lose the thread, or you don't,
-and the note ends up in a pile that nobody will ever sort.
+which tags. That's the worst possible moment to decide, while the thought is
+still only in your head. So either you stop to sort it and lose the thread, or
+you don't, and the note ends up in a pile that nobody will ever sort.
 
 Loose Ends splits the two. You write the note now, and sort it later. Until
 you've sorted it, the note carries one tag saying so, and that tag keeps it in
@@ -31,8 +31,8 @@ away by itself.
 
 ## 1 Installation
 
-Install Loose Ends in Obsidian: go to Settings → Community plugins → Browse,
-search for "Loose Ends", then install and enable it. You can also open
+In Obsidian, go to Settings → Community plugins → Browse, search for
+"Loose Ends", and install and enable it. You can also find it on
 [its page in the plugin directory](https://community.obsidian.md/plugins/loose-ends).
 
 Loose Ends needs Obsidian 1.13 or later, and works on desktop and mobile.
@@ -41,7 +41,8 @@ Loose Ends needs Obsidian 1.13 or later, and works on desktop and mobile.
 
 ## 2 Getting started
 
-Loose Ends does nothing until you tell it what a note needs. So:
+Loose Ends won't do anything until you tell it what a note needs. Here's how to
+set it up and file your first note:
 
 1. **Say what every note needs.** In Settings → Loose Ends → **Axes**, click
    **Add axis**. Type `domain` in the first field and `work, personal` in the
@@ -82,9 +83,9 @@ writes and when.
 
 It doesn't connect to the internet and doesn't run any programs.
 
-Every push is tested, and every release is built in the open with a signed
-attestation, so you can check that the file you installed is the one that was
-built. [Section 11.4](#114-how-releases-are-built) says how.
+Every change is tested. Every release is built in public on GitHub, and you
+can check that the file you installed is the one GitHub built.
+[Section 11.4](#114-how-releases-are-built) shows how.
 
 <br/>
 
@@ -135,7 +136,7 @@ If you want to work on the plugin:
 - **Dates in names** - A template can put today's date in the note's name, or
   the date you type.
 - **Prompts that stay out of your note** - A question under a template's
-  heading is drawn in the note, and never written to the file.
+  heading is shown faintly in the note, but never saved to the file.
 
 ### 5.2 Filing
 
@@ -157,9 +158,9 @@ If you want to work on the plugin:
 
 ### 5.4 Staying honest
 
-- **A tag that can't go stale** - The unfiled tag is worked out from the note's
-  own tags every time. Delete it by hand and it comes back; answer the last
-  question and it goes.
+- **A tag that's never out of date** - Loose Ends checks the note's own tags
+  every time it changes. Delete the unfiled tag by hand and it comes back.
+  Answer the last question and it's gone.
 - **Exact answers** - Only the values you listed count, so a typo or an old
   tag never quietly passes as filed.
 - **Only your notes** - Nothing outside your notes folder is ever tagged.
@@ -187,40 +188,41 @@ one is **unfiled**, and gets the tag you named for that, such as `inbox`.
 Only the tags in a note's `tags` property count as answers. Loose Ends writes
 them there too.
 
-### 6.2 The unfiled tag is worked out, not stored
+### 6.2 The unfiled tag looks after itself
 
-The unfiled tag isn't a record of anything. It's worked out from the note's own
-tags every time the note changes, and only written so that you can see it, for
-example as a folder in a tag tree. **Your answers are the record.**
+You never have to add or remove the unfiled tag yourself. Every time a note
+changes, Loose Ends looks at its tags and adds or takes off the unfiled tag to
+match. The tag is only there so you can see what's waiting, for example as a
+folder in Tag Along. If it ever disagrees with your answers, your answers win.
 
-That's why it can't go stale. Delete the tag by hand, and it comes back.
-Answer the last question, and it goes. Change the axes, and every note in the
-notes folder is checked again when you close the settings.
+That's also why it's never out of date. If you delete the tag by hand, it comes
+back, and once you answer the last question, it goes. After you change the axes,
+every note in the notes folder is checked again when you close the settings.
 
-### 6.3 Values are compared exactly
+### 6.3 Only the exact values count
 
 `domain/work/project-x` doesn't answer the `domain` axis, and neither does a
 bare `domain`. Only `domain/work` and `domain/personal` do, because those are
 the values you listed. If you want `work/project-x` as an answer, add it to the
-list: a value can have a slash in it like any other.
+list. A value with a slash in it works like any other.
 
 When Loose Ends asks about an axis, the question names any tag under it that
-isn't one of its values, and picking a value replaces it. Nothing else ever
-touches it.
+isn't one of the values you listed, and the value you pick replaces it. Loose
+Ends never removes that tag any other way.
 
-This is on purpose, and it's the bug this plugin was written after. Its
-predecessor accepted anything that *started with* `domain/`, so a nested tag
-passed as an answer while no picker would ever offer it. The only way to make
-one was typing it by hand, which made the first typo a matter of time, and one
-that didn't show up until the tag tree came apart.
+This is on purpose, and it's the bug that made me write Loose Ends. My old
+setup accepted anything that *started with* `domain/`. A nested tag counted as
+an answer, even though no picker ever offered one. The only way to make one was
+to type it by hand, and sooner or later that meant a typo. Nobody noticed until
+the tag tree was a mess.
 
 ### 6.4 The notes folder
 
-The **Notes folder** does two jobs: it's where **Add note** makes new notes,
-and it's the only place Loose Ends ever writes the unfiled tag. Keep it narrow
-if other plugins own some of your notes, like a folder of literature notes:
-those will never answer your axes, so without the folder they'd stay unfiled
-forever.
+The **Notes folder** has two jobs. **Add note** makes new notes there, and it's
+the only place Loose Ends ever adds the unfiled tag. If some of your notes
+belong to another plugin, like a folder of literature notes, pick a Notes folder
+that leaves them out. Those notes will never answer your axes, so they'd stay
+unfiled forever.
 
 <br/>
 
@@ -261,8 +263,9 @@ faintly on the empty line under the heading, until you write something there.
 Because it only lives in the template, rewording it rewords it in every note,
 and nothing stays behind under what you wrote.
 
-A note is matched to its template by its headings. A template with no heading
-besides its title can't be recognised, so its prompts are never shown.
+Loose Ends tells which template a note came from by its headings. If a template
+has no heading besides its title, there's nothing to tell it by, and its prompts
+won't show.
 
 <!-- SCREENSHOT images/prompts.png: a note made from the Meeting template, with a line written under Preparation and faint prompts under the empty Discussed and Agreed headings. -->
 
@@ -270,8 +273,8 @@ besides its title can't be recognised, so its prompts are never shown.
 
 ## 8 Commands
 
-None of the commands has a hotkey, so you can choose your own in Settings →
-Hotkeys.
+None of the commands come with a hotkey, so they won't clash with the ones
+you already use. You can set your own in Settings → Hotkeys.
 
 - `Loose Ends: Add note` - Asks for a name and a template, and makes the note
   in your notes folder.
@@ -294,9 +297,9 @@ notes folder: **File note** while the note is still missing something, and
 | --- | --- | --- |
 | **Notes folder** | Whole vault | Where **Add note** makes new notes, and the only folder where Loose Ends adds tags. See [The notes folder](#64-the-notes-folder). |
 | **Template folder** | `Templates` | The templates **Add note** offers. See [Templates](#7-templates). |
-| **Remember the last template** | On | Offer the template you picked last first. When it's off, `Default` comes first, then the rest by name, for when one template is the usual answer. |
-| **Unfiled tag** | Empty | The tag written on a note that's still missing an answer, and the name of the inbox block's first group. Leave it empty for no tag. |
-| **Axes** | None | What a note has to answer. Each axis is a top-level tag and the values it accepts. The pickers offer your most recent answers first, then the rest in the order you listed them. |
+| **Remember the last template** | On | Put the template you picked last at the top of the list. When this is off, `Default` comes first and the rest follow by name. Turn it off if one template is nearly always the right one. |
+| **Unfiled tag** | Empty | Loose Ends adds this tag to a note that's still missing an answer, and takes it off once every answer is in. In Tag Along, or another plugin that shows your tags as folders, it becomes a folder of every note still waiting. The inbox block names its first group after it too. Leave it empty if you don't want the tag. |
+| **Axes** | None | The questions a note has to answer before it counts as filed. Each axis is a top-level tag, like `domain`, with the values it accepts, like `work` and `personal`. Only those exact values count as answers. A tag like `domain/work/project-x` doesn't, unless you add `work/project-x` to the list. The pickers offer your most recent answers first, then the rest in the order you listed them. |
 
 **Refresh tags** is at the bottom of the settings too.
 
@@ -304,8 +307,8 @@ notes folder: **File note** while the note is still missing something, and
 
 ## 10 Works well with
 
-These plugins are by the same author. Each does one thing, and Loose Ends
-doesn't need the other, but they fit together nicely.
+I made these too. Each one does one thing and works on its own, but they fit
+together nicely.
 
 ### 10.1 Tag Along
 
@@ -314,7 +317,7 @@ as a folder tree built from your tags. Each axis becomes a tree, like `domain`
 and `source`, and the unfiled tag becomes a folder of everything still waiting.
 
 Set **Unfiled tag** to `inbox`, and make `inbox` an exclusive folder in Tag
-Along: a new note then shows up in `inbox` only, and moves to its proper
+Along. A new note then only shows up in `inbox`, and moves to its proper
 folders the moment you've finished filing it.
 
 ![Tag Along with the inbox folder at the top, holding the notes that still need tags, and the domain tree below](https://raw.githubusercontent.com/jorritvanderheide/obsidian-loose-ends/main/images/tag-along.png)
@@ -345,10 +348,10 @@ Only in notes in your notes folder, and only these:
 - **New notes:** **Add note** makes the note you ask for.
 
 When it adds a tag, it keeps the `tags` list sorted, the way the Linter plugin
-does, so your next save doesn't show a change nobody made. The tags
-themselves stay as they are, but the property is written back as a plain list:
-a comma or space separated string becomes a list, a leading `#` is dropped, and
-a tag that was there twice is kept once.
+does. That way, if you use Linter, it has nothing to reorder the next time you
+save. Your tags themselves stay as they are, but the property is written back
+as a plain list. A comma or space separated string becomes a list, a leading
+`#` is dropped, and a tag that was there twice is kept once.
 
 ### 11.3 What it stores
 
@@ -360,19 +363,22 @@ a tag that was there twice is kept once.
   each axis, so your usual choice comes first.
 - **Filing dates:** When each note was filed, for **Recently filed**.
 
-Recent picks and filing dates are habits rather than settings, so they're kept
-in Obsidian's local storage for this vault, and don't sync to your other
-devices.
+Recent picks and filing dates are kept in Obsidian's local storage for this
+vault, on this device. They don't sync to your other devices.
 
 ### 11.4 How releases are built
 
-Every push is built, linted with [ESLint](https://eslint.org/) and the official
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), tested
-with [Vitest](https://vitest.dev/), and built with Nix as well. Releases are
-built by GitHub Actions from the tagged source, after the same checks and a
-check that the tag is the version in `manifest.json`, with every action pinned
-to an exact version, and come with a signed build provenance attestation, so
-you can check that the file you installed is the one that was built:
+Every change I push is built, checked with [ESLint](https://eslint.org/) and
+the official [Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin),
+and tested with [Vitest](https://vitest.dev/). Nix builds it a second time,
+on its own.
+
+Releases are built by GitHub Actions from the tagged code, after the same
+checks. A release only goes out when its tag matches the version in
+`manifest.json`, and every action it uses is pinned to an exact version. Each
+release comes with a signed attestation from GitHub, which records what it
+was built from. To check that the `main.js` you installed is the one GitHub
+built:
 
 ```sh
 gh attestation verify main.js --repo jorritvanderheide/obsidian-loose-ends
@@ -382,22 +388,22 @@ gh attestation verify main.js --repo jorritvanderheide/obsidian-loose-ends
 
 ## 12 Questions or issues?
 
-Have a look at the [FAQ](FAQ.md) first: it covers the most common surprises,
-like an unfiled tag that keeps coming back. If something still doesn't work, or
-you have an idea, please
+Have a look at the [FAQ](FAQ.md) first. It covers the things people run into
+most, like an unfiled tag that keeps coming back. If something still doesn't
+work, or you have an idea, please
 [open an issue](https://github.com/jorritvanderheide/obsidian-loose-ends/issues/new/choose).
-Found a security problem? Please report it privately, as described in the
-[security policy](SECURITY.md).
+Found a security problem? Please report it privately, the way the
+[security policy](SECURITY.md) explains.
 
-The source lives on [Codeberg](https://codeberg.org/BW20/obsidian-loose-ends)
-and is mirrored to [GitHub](https://github.com/jorritvanderheide/obsidian-loose-ends).
+The code lives on [Codeberg](https://codeberg.org/BW20/obsidian-loose-ends),
+with a copy on [GitHub](https://github.com/jorritvanderheide/obsidian-loose-ends).
 
 <br/>
 
 ## 13 Support
 
-Loose Ends is free. If you find it useful, you can support its development on
-Liberapay:
+Loose Ends is free. If it's useful to you and you'd like to give something back,
+you can do that on Liberapay:
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 

@@ -76,11 +76,11 @@ describe('recentlyFiled', () => {
 
 describe('owedLabel', () => {
 	it('names one axis', () => {
-		expect(owedLabel([domain])).toBe('No domain yet');
+		expect(owedLabel([domain])).toBe('Still missing domain');
 	});
 
 	it('names several in order', () => {
-		expect(owedLabel([domain, source, { namespace: 'type', values: ['x'] }])).toBe('No domain, source and type yet');
+		expect(owedLabel([domain, source, { namespace: 'type', values: ['x'] }])).toBe('Still missing domain, source and type');
 	});
 });
 

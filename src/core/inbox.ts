@@ -77,7 +77,7 @@ export function owedLabel(missing: readonly Axis[]): string {
 	const names = missing.map((axis) => axis.namespace);
 	const last = names.pop() ?? '';
 	const list = names.length === 0 ? last : `${names.join(', ')} and ${last}`;
-	return `No ${list} yet`;
+	return `Still missing ${list}`;
 }
 
 const MINUTE = 60 * 1000;

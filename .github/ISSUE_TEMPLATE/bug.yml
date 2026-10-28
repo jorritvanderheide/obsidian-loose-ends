@@ -5,7 +5,7 @@ body:
     - type: markdown
       attributes:
           value: |
-              Thanks for taking the time to report this. Before you start, have a quick look at the [FAQ](https://github.com/jorritvanderheide/obsidian-loose-ends/blob/main/FAQ.md): the most common surprises, like an unfiled tag that keeps coming back, are explained there.
+              Thanks for taking the time to report this. Before you start, have a quick look at the [FAQ](https://github.com/jorritvanderheide/obsidian-loose-ends/blob/main/FAQ.md). It covers the things people run into most, like an unfiled tag that keeps coming back.
 
               Found a security problem? Please don't report it here. Use [private reporting](https://github.com/jorritvanderheide/obsidian-loose-ends/security/advisories/new) instead.
 

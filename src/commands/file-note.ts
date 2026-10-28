@@ -46,6 +46,20 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 	return true;
 }
 
+/**
+ * Why there is no note to act on. `activeNote` is null both when no note is
+ * open and when the open one is outside the notes folder, and each wants its
+ * own advice.
+ */
+function noNoteNotice(context: Context): void {
+	const open = context.app.workspace.getActiveFile();
+	new Notice(
+		open?.extension === 'md'
+			? 'This note is outside your notes folder, and Loose Ends only files notes inside it. Move it in, or change Settings → Loose Ends → Notes folder.'
+			: "There's no note open to file. Open a note in your notes folder, then try again.",
+	);
+}
+
 /** File a note: the one given, or the one open. */
 export async function fileNote(context: Context, target?: TFile): Promise<void> {
 	if (activeAxes(context.settings).length === 0) {
@@ -54,7 +68,7 @@ export async function fileNote(context: Context, target?: TFile): Promise<void> 
 	}
 	const file = target ?? activeNote(context.app, context.settings);
 	if (file === null) {
-		new Notice('Loose Ends only files notes in its notes folder.');
+		noNoteNotice(context);
 		return;
 	}
 
@@ -83,7 +97,7 @@ export async function fileNote(context: Context, target?: TFile): Promise<void> 
 export async function setAxis(context: Context, axis: Axis, target?: TFile): Promise<void> {
 	const file = target ?? activeNote(context.app, context.settings);
 	if (file === null) {
-		new Notice('Loose Ends only files notes in its notes folder.');
+		noNoteNotice(context);
 		return;
 	}
 	if (await answer(context, file, axis)) await syncMirror(context.app, file, context.settings);

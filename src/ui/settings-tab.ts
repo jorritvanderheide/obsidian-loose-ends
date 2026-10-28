@@ -26,23 +26,23 @@ export class LooseEndsSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Template folder',
-				desc: "The templates Add note offers: every Markdown file in this folder. {{title}} becomes the note's name, {{date}} today's date as YYYY-MM-DD ({{date:YYYY-MM}} or {{date:YYYY}} for less of it), and the cursor starts at {{cursor}}. A title heading with {{date}} in it puts the date in the note's name too, unless you type a date yourself. An HTML comment right under a heading becomes that heading's prompt: it's shown in the note, not copied into it.",
+				desc: "Add note offers every Markdown file in this folder as a template. In a template, {{title}} becomes the note's name, {{date}} becomes today's date as YYYY-MM-DD, and the cursor starts at {{cursor}}. Use {{date:YYYY-MM}} or {{date:YYYY}} for just the month or the year. With {{date}} in the title heading, the note's name gets the date too, unless you type a date yourself. An HTML comment right under a heading is shown faintly in the note as a prompt, and never copied into it.",
 				control: { type: 'folder', key: 'templateFolder' },
 			},
 			{
 				name: 'Remember the last template',
-				desc: "Offer the template you picked last first. When it's off, Default comes first, then the rest by name.",
+				desc: "Put the template you picked last at the top of the list. When this is off, Default comes first and the rest follow by name.",
 				control: { type: 'toggle', key: 'rememberTemplate' },
 			},
 			{
 				name: 'Unfiled tag',
-				desc: "Added to a note that's still missing an answer, and taken off once it has them all. It's what gives a tag tree a folder of everything still waiting. Leave it empty for no tag.",
-				control: { type: 'text', key: 'unfiledTag', placeholder: 'status/unfiled' },
+				desc: "Loose Ends adds this tag to a note that's still missing an answer, and takes it off once every answer is in. In Tag Along, or another plugin that shows your tags as folders, it becomes a folder of every note still waiting. The inbox block names its first group after it too. Leave it empty if you don't want the tag.",
+				control: { type: 'text', key: 'unfiledTag', placeholder: 'inbox' },
 			},
 			{
 				type: 'page',
 				name: 'Axes',
-				desc: "The questions a note has to answer before it counts as filed. Each axis is a top-level tag, like domain, with the values it accepts, like work and personal. Values are compared exactly, so a tag that isn't in the list, nested or not, never counts as an answer.",
+				desc: "The questions a note has to answer before it counts as filed. Each axis is a top-level tag, like domain, with the values it accepts, like work and personal. Only those exact values count as answers. A tag like domain/work/project-x doesn't, unless you add work/project-x to the list.",
 				displayValue: () => countLabel(settings.axes.length),
 				items: [
 					{
