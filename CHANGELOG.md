@@ -3,7 +3,7 @@
 What changed in each release of Loose Ends, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
-## Unreleased
+## 1.6.0
 
 - Loose Ends now needs Obsidian 1.13.1. The **Axes** setting shows how many
   axes you have beside it, and that came with 1.13.1. On 1.13.0 it was missing.
