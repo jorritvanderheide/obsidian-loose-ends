@@ -9,7 +9,7 @@ which shows your tags as a folder tree. See
 <br/>
 
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=Downloads&query=%24%5B%22loose-ends%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
-![Obsidian Compatibility](https://img.shields.io/badge/Obsidian-v1.13.0+-483699?logo=obsidian&style=flat-square)
+![Obsidian Compatibility](https://img.shields.io/badge/Obsidian-v1.13.1+-483699?logo=obsidian&style=flat-square)
 ![Desktop and mobile](https://img.shields.io/badge/platform-desktop%20%7C%20mobile-483699?style=flat-square)
 [![Checks](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/ci.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-loose-ends/actions/workflows/ci.yml)
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)](LICENSE)

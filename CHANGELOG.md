@@ -3,6 +3,11 @@
 What changed in each release of Loose Ends, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
+## Unreleased
+
+- Loose Ends now needs Obsidian 1.13.1. The **Axes** setting shows how many
+  axes you have beside it, and that came with 1.13.1. On 1.13.0 it was missing.
+
 ## 1.5.2
 
 - File note and the Set commands no longer say a note is outside the notes folder when no note is open at all. That case now says "There's no note open to file.", and a note outside the folder says so in its own message.

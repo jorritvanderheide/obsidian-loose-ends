@@ -96,9 +96,9 @@ Loose Ends registers no views and no URI handler.
 
 ## Obsidian versions and platforms
 
-- **`minAppVersion`** is `1.13.0`, and has been for every release. Raising it is
-  allowed in a minor release: Obsidian keeps an older app on the last release
-  `versions.json` says it can run. Change it in `manifest.json` before
+- **`minAppVersion`** is `1.13.1` since 1.6.0, and was `1.13.0` before. Raising
+  it is allowed in a minor release: Obsidian keeps an older app on the last
+  release `versions.json` says it can run. Change it in `manifest.json` before
   `npm version`, which copies it into `versions.json` for the new version.
   Never edit an entry that's already in `versions.json`.
 - **Desktop and mobile**: `isDesktopOnly` is `false`, and stays that way. Code
