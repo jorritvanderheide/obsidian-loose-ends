@@ -13,6 +13,7 @@
 // what is written or when a note counts as filed, and its default is how the
 // plugin behaved without it.
 
+import { cleanFolder } from './note';
 import type { Axis } from './vocabulary';
 import { normaliseNamespace, normaliseValue } from './vocabulary';
 
@@ -111,4 +112,22 @@ export function loadSettings(data: unknown): Settings {
  */
 export function activeAxes(settings: Settings): Axis[] {
 	return readAxes(settings.axes);
+}
+
+/**
+ * Everything in the settings that decides which notes get the unfiled tag,
+ * as one value to compare: the axes in effect, the tag, and the two folders
+ * that make up the scope.
+ *
+ * When it differs from the one the last sweep ran with, every note in scope
+ * wants checking again. Leaving `rememberTemplate` out means flipping it
+ * doesn't check the whole vault for nothing.
+ */
+export function mirrorKey(settings: Settings): string {
+	return JSON.stringify([
+		activeAxes(settings),
+		settings.unfiledTag,
+		cleanFolder(settings.notesFolder),
+		cleanFolder(settings.templateFolder),
+	]);
 }

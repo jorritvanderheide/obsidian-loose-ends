@@ -199,7 +199,9 @@ folder in Tag Along. If it ever disagrees with your answers, your answers win.
 
 That's also why it's never out of date. If you delete the tag by hand, it comes
 back, and once you answer the last question, it goes. After you change the axes,
-every note in the notes folder is checked again when you close the settings.
+a folder or the unfiled tag, every note in the notes folder is checked again
+when you close the settings. With Obsidian Sync, your other devices check
+again too, as soon as the new settings reach them.
 
 ### 6.3 Only the exact values count
 
@@ -289,7 +291,8 @@ you already use. You can set your own in Settings → Hotkeys.
 - `Loose Ends: Set <axis>` - Changes one answer on the open note, whether or
   not it already had one. There's one for each axis, named after it.
 - `Loose Ends: Refresh tags` - Checks every note in your notes folder against
-  the axes. This also runs by itself when the axes change.
+  the axes. This also runs by itself when the axes, a folder or the unfiled
+  tag change.
 
 **File note** and **Set** are also on the right-click menu of every note in the
 notes folder: **File note** while the note is still missing something, and

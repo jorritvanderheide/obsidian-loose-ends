@@ -8,6 +8,8 @@ breaking is in [Compatibility](docs/compatibility.md).
 - Loose Ends no longer adds the unfiled tag to your templates. With the notes folder left empty, it treated the template folder like any other, so each template got the tag and showed up in the inbox block as a note to file. The template folder is now always left out, even when it's inside the notes folder. If a template already has the tag, take it off once by hand, and it won't come back.
 - A number in a note's tags is no longer lost when Loose Ends writes the tags. With `tags: [2024, project]`, adding the unfiled tag or an answer used to drop the `2024`. The number is now kept, written as text.
 - When a note's tags property holds something that isn't a tag, like a link or `status: done` typed into the list, Loose Ends now leaves the tags alone. Writing them back used to drop that entry without a word. File note and the Set commands say why instead of writing your answer.
+- Settings changed on another device now take effect as soon as Obsidian Sync brings them over. Before, a device that was already open kept tagging by the old axes, and undid the tags the other device had written, until you restarted Obsidian there.
+- Closing the settings after changing the unfiled tag, the notes folder or the template folder now checks every note again, the way it already did after changing the axes. Before, that waited for the next time Obsidian started.
 
 ## 1.6.0
 

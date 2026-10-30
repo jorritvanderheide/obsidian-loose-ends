@@ -99,9 +99,15 @@ through an untyped value. Read and write frontmatter through these two.
 
 - quietly on startup, once the metadata cache is ready,
 - from **Refresh tags**, with a notice saying how many notes changed,
-- when an axis is removed, and when the settings tab closes after the axes
-  changed (`sweepIfAxesChanged`). Not on every keystroke while an axis is
-  being typed.
+- when an axis is removed, and when the settings tab closes after something
+  in `mirrorKey` changed (the axes in effect, the unfiled tag, the notes folder
+  or the template folder), through `sweepIfChanged`. Not on every keystroke
+  while an axis or a folder is being typed.
+- quietly, when a sync brings settings saved on another device
+  (`onExternalSettingsChange`) and `mirrorKey` changed. The settings are
+  loaded into the same object, because the inbox blocks hold the one they
+  were drawn with. Without the reload, this device would go on tagging by the
+  old axes and undo what the other device wrote.
 
 ## Prompts
 

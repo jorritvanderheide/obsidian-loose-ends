@@ -4,7 +4,7 @@ import { fileNote, setAxis } from './commands/file-note';
 import type { Context } from './context';
 import type { TemplatePrompts } from './core/prompts';
 import { inScope } from './core/scope';
-import { activeAxes, loadSettings, type Settings } from './core/settings';
+import { activeAxes, loadSettings, mirrorKey, type Settings } from './core/settings';
 import { isTemplate } from './core/template';
 import { announceInboxChange, FilingWatch } from './inbox';
 import { syncMirror, sweepMirror } from './mirror';
@@ -35,15 +35,16 @@ export default class LooseEndsPlugin extends Plugin {
 	private promptsFrom: string | null = null;
 	/** The namespaces a Set command is registered for. */
 	private axisCommands = new Set<string>();
-	/** The axes the last sweep checked against, to notice them changing. */
-	private sweptAxes: string | null = null;
+	/** What the last sweep checked against (`mirrorKey`), to notice it changing. */
+	private sweptFor: string | null = null;
+	private settingTab = new LooseEndsSettingTab(this.app, this);
 	/** When a note went from unfiled to filed, for the inbox block's Recently filed. */
 	private watch = new FilingWatch(this.app, () => this.settings);
 
 	async onload(): Promise<void> {
 		const data: unknown = await this.loadData();
 		this.settings = loadSettings(data);
-		this.addSettingTab(new LooseEndsSettingTab(this.app, this));
+		this.addSettingTab(this.settingTab);
 
 		this.addCommand({
 			id: 'add-note',
@@ -179,15 +180,19 @@ export default class LooseEndsPlugin extends Plugin {
 		}
 	}
 
-	/** Sweep again if the axes changed since the last sweep. */
-	async sweepIfAxesChanged(): Promise<void> {
-		if (JSON.stringify(activeAxes(this.settings)) === this.sweptAxes) return;
-		await this.sweep();
+	/**
+	 * Sweep again if anything that decides the unfiled tag changed since the last
+	 * sweep: the axes, the tag, or the folders. `quiet` for a change nobody made
+	 * on this device.
+	 */
+	async sweepIfChanged(quiet = false): Promise<void> {
+		if (mirrorKey(this.settings) === this.sweptFor) return;
+		await this.sweep(quiet);
 	}
 
 	/** Check every note in scope. `quiet` for the one on startup. */
 	async sweep(quiet = false): Promise<void> {
-		this.sweptAxes = JSON.stringify(activeAxes(this.settings));
+		this.sweptFor = mirrorKey(this.settings);
 		// The axes may have filed or unfiled notes by the dozen, and none of that
 		// is somebody filing a note, so the watch starts again from here.
 		this.watch.reset();
@@ -198,6 +203,28 @@ export default class LooseEndsPlugin extends Plugin {
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+		await this.settingsChanged();
+	}
+
+	/**
+	 * Settings saved on another device and brought here by a sync. Without this,
+	 * this device would go on writing the unfiled tag by the axes it loaded with,
+	 * and undo every note the other device tagged by the new ones.
+	 *
+	 * Loaded into the same object, because the inbox blocks hold the settings
+	 * they were drawn with.
+	 */
+	async onExternalSettingsChange(): Promise<void> {
+		const data: unknown = await this.loadData();
+		Object.assign(this.settings, loadSettings(data));
+		await this.settingsChanged();
+		this.settingTab.update();
+		// Before the layout is ready, the sweep on startup is still to come.
+		if (this.app.workspace.layoutReady) await this.sweepIfChanged(true);
+	}
+
+	/** Bring everything that follows the settings in line with them. */
+	private async settingsChanged(): Promise<void> {
 		this.syncAxisCommands();
 		// A settings change can file or unfile notes, and that is never somebody
 		// filing one, so the watch takes stock again rather than logging it.

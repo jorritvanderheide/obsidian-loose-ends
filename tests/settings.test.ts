@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeAxes, DEFAULT_SETTINGS, loadSettings, readAxes, SETTINGS_VERSION, type Settings } from '../src/core/settings';
+import { activeAxes, DEFAULT_SETTINGS, loadSettings, mirrorKey, readAxes, SETTINGS_VERSION, type Settings } from '../src/core/settings';
 
 describe('readAxes', () => {
 	it('reads a well formed axis', () => {
@@ -57,6 +57,28 @@ describe('activeAxes', () => {
 			],
 		};
 		expect(activeAxes(settings)).toEqual([{ namespace: 'domain', values: ['phd'] }]);
+	});
+});
+
+describe('mirrorKey', () => {
+	const base: Settings = { ...DEFAULT_SETTINGS, axes: [{ namespace: 'domain', values: ['phd'] }], unfiledTag: 'inbox' };
+
+	// Each of these changes which notes get the unfiled tag, so the notes want
+	// checking again, whether the change was made here or synced from another
+	// device.
+	it('changes with the axes, the unfiled tag and both folders', () => {
+		const key = mirrorKey(base);
+		expect(mirrorKey({ ...base, axes: [{ namespace: 'domain', values: ['phd', 'vault'] }] })).not.toBe(key);
+		expect(mirrorKey({ ...base, unfiledTag: 'todo' })).not.toBe(key);
+		expect(mirrorKey({ ...base, notesFolder: 'Notes' })).not.toBe(key);
+		expect(mirrorKey({ ...base, templateFolder: 'Other' })).not.toBe(key);
+	});
+
+	it('stays the same for what changes no tag', () => {
+		const key = mirrorKey(base);
+		expect(mirrorKey({ ...base, rememberTemplate: false })).toBe(key);
+		expect(mirrorKey({ ...base, templateFolder: 'Templates/' })).toBe(key);
+		expect(mirrorKey({ ...base, axes: [...base.axes, { namespace: '', values: [] }] })).toBe(key);
 	});
 });
 
