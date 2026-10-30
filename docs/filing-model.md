@@ -76,6 +76,10 @@ The notes folder is the only place the unfiled tag is ever written. A folder
 owned by another plugin, such as literature notes, answers no axis and never
 will, so without the scope every note in it would read as unfiled forever.
 
+The template folder is never in scope, even inside the notes folder or when the
+notes folder is the whole vault. A template isn't a note waiting to be filed,
+and a tag written into it would be copied into every note made from it.
+
 ## What isn't configurable
 
 The loop itself: capture without classifying, then classify, with a tag that

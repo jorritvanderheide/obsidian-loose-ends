@@ -3,10 +3,11 @@ import { addNote, writeStarterTemplate } from './commands/add-note';
 import { fileNote, setAxis } from './commands/file-note';
 import type { Context } from './context';
 import type { TemplatePrompts } from './core/prompts';
+import { inScope } from './core/scope';
 import { activeAxes, loadSettings, type Settings } from './core/settings';
 import { isTemplate } from './core/template';
 import { announceInboxChange, FilingWatch } from './inbox';
-import { inScope, syncMirror, sweepMirror } from './mirror';
+import { syncMirror, sweepMirror } from './mirror';
 import { templatePrompts } from './templates';
 import { ghosts, redrawGhosts } from './ui/ghost';
 import { INBOX_BLOCK, InboxBlock } from './ui/inbox-block';
@@ -73,7 +74,7 @@ export default class LooseEndsPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on('file-menu', (menu, file) => {
 				if (!(file instanceof TFile) || file.extension !== 'md') return;
-				if (!inScope(file.path, this.settings.notesFolder)) return;
+				if (!inScope(file.path, this.settings)) return;
 				addFilingItems(menu, this.context(), file);
 			}),
 		);
@@ -87,7 +88,7 @@ export default class LooseEndsPlugin extends Plugin {
 
 		this.registerEditorExtension(
 			ghosts({
-				inScope: (path) => inScope(path, this.settings.notesFolder),
+				inScope: (path) => inScope(path, this.settings),
 				prompts: () => this.prompts,
 			}),
 		);

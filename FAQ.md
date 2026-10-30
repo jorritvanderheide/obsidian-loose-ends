@@ -129,6 +129,13 @@ Put a date in the template's title heading, like `# {{title}} {{date}}`. Typing
 `Hanna 2026-10-07`, and that date is used instead. Use `{{date:YYYY-MM}}` or
 `{{date:YYYY}}` for a note about a month or a year.
 
+### My template has the unfiled tag
+
+Loose Ends 1.6.0 and earlier added the unfiled tag to templates when the notes
+folder was left empty. Newer versions leave your template folder alone. Take
+the tag off the template once, and it won't come back. A note you already made
+from it loses the tag when you file it, like any other note.
+
 ### I deleted the Default template, and it didn't come back
 
 Loose Ends only writes it once, on a fresh install. If you delete it, it takes

@@ -37,8 +37,9 @@ and what to do.
 ## What it writes in notes
 
 Besides the notes **Add note** makes, Loose Ends only writes the `tags`
-property of notes in the notes folder. Section 11.2 of the README promises
-exactly this, so writing anything else in a note is breaking.
+property of notes in the notes folder, and never in the template folder.
+Section 11.2 of the README promises exactly this, so writing anything else in a
+note, or writing in a template, is breaking.
 
 - **Answers** are written as `<namespace>/<value>`, replacing every other tag
   under that namespace and the bare namespace (`withValue`).

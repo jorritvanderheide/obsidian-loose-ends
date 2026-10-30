@@ -8,10 +8,10 @@
 import { TFile, type App, type EventRef, type Events } from 'obsidian';
 import { isFiled } from './core/filing';
 import { readFilings, withFiling, withoutFiling, withRename, type Filing, type InboxNote } from './core/inbox';
+import { inScope } from './core/scope';
 import { activeAxes, type Settings } from './core/settings';
 import { readTags } from './core/tags';
 import { cachedTags } from './frontmatter';
-import { inScope } from './mirror';
 
 const FILINGS_KEY = 'loose-ends-filings';
 
@@ -45,7 +45,7 @@ function inboxNote(app: App, file: TFile): InboxNote {
 export function inboxNotes(app: App, settings: Settings): InboxNote[] {
 	return app.vault
 		.getMarkdownFiles()
-		.filter((file) => inScope(file.path, settings.notesFolder))
+		.filter((file) => inScope(file.path, settings))
 		.map((file) => inboxNote(app, file));
 }
 
@@ -77,7 +77,7 @@ export class FilingWatch {
 		this.unfiled = new Set(
 			this.app.vault
 				.getMarkdownFiles()
-				.filter((file) => inScope(file.path, this.settings().notesFolder))
+				.filter((file) => inScope(file.path, this.settings()))
 				.filter((file) => this.app.metadataCache.getFileCache(file) !== null)
 				.filter((file) => !isFiled(axes, readTags(cachedTags(this.app, file))))
 				.map((file) => file.path),
@@ -85,7 +85,7 @@ export class FilingWatch {
 	}
 
 	noteChanged(file: TFile): void {
-		if (!inScope(file.path, this.settings().notesFolder)) {
+		if (!inScope(file.path, this.settings())) {
 			this.unfiled.delete(file.path);
 			return;
 		}
@@ -101,7 +101,7 @@ export class FilingWatch {
 	renamed(file: TFile, from: string): void {
 		this.unfiled.delete(from);
 		const tags = readTags(cachedTags(this.app, file));
-		if (inScope(file.path, this.settings().notesFolder) && !isFiled(activeAxes(this.settings()), tags)) {
+		if (inScope(file.path, this.settings()) && !isFiled(activeAxes(this.settings()), tags)) {
 			this.unfiled.add(file.path);
 		}
 		const log = loadFilings(this.app);

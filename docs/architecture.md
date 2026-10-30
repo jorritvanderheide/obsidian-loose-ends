@@ -30,6 +30,7 @@ around that.
 | `prompts.ts` | Reading prompts from templates, taking them out of a new note, and where to draw them. |
 | `recent.ts` | Ordering choices by what was picked last. |
 | `note.ts` | Where a new note goes, and what's wrong with a name. |
+| `scope.ts` | Which notes the plugin looks after. |
 | `settings.ts` | The settings shape, defaults and loading. |
 
 **Every decision belongs in `core/`.** If something in `commands/` or `ui/` is
@@ -73,10 +74,13 @@ prevent.
 
 ## Scope
 
-`inScope` in `mirror.ts` decides whether a note belongs to the plugin: it's in
-the notes folder, or the notes folder is empty. The unfiled tag is only ever
-written in scope, **File note** and **Set** only act in scope, the inbox block
-only lists notes in scope, and prompts are only drawn in scope.
+`inScope` in `core/scope.ts` decides whether a note belongs to the plugin: it's
+in the notes folder, or the notes folder is empty, and it isn't in the template
+folder. A template folder inside the notes folder, or under an empty one, is
+still left out. Otherwise a template would get the unfiled tag and pass it on
+to every note made from it. The unfiled tag is only ever written in scope,
+**File note** and **Set** only act in scope, the inbox block only lists notes
+in scope, and prompts are only drawn in scope.
 
 ## `frontmatter.ts`
 

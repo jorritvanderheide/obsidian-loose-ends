@@ -9,9 +9,9 @@ import { MarkdownRenderChild, MarkdownView, Menu, debounce, setIcon, type App, t
 import { fileNote } from '../commands/file-note';
 import type { Context } from '../context';
 import { INBOX_ROWS, filedLabel, inboxLabel, owedLabel, recentlyFiled, unfiledNotes, type InboxNote } from '../core/inbox';
+import { inScope } from '../core/scope';
 import { activeAxes } from '../core/settings';
 import { inboxNotes, loadFilings, onInboxChange } from '../inbox';
-import { inScope } from '../mirror';
 import { addFilingItems } from './note-menu';
 
 export const INBOX_BLOCK = 'loose-ends';
@@ -44,7 +44,7 @@ export class InboxBlock extends MarkdownRenderChild {
 		// Only a note the block could list, so typing elsewhere, in the note
 		// holding the block included, does not redraw it on every pause.
 		const listed = (path: string) => {
-			if (inScope(path, this.context.settings.notesFolder)) this.redraw();
+			if (inScope(path, this.context.settings)) this.redraw();
 		};
 		this.registerEvent(app.metadataCache.on('changed', (file) => listed(file.path)));
 		this.registerEvent(app.vault.on('create', (file) => listed(file.path)));

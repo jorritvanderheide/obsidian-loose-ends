@@ -5,24 +5,10 @@
 
 import { TFile, type App } from 'obsidian';
 import { mirrorIsCurrent, withMirror } from './core/filing';
-import { cleanFolder } from './core/note';
+import { inScope } from './core/scope';
 import { activeAxes, type Settings } from './core/settings';
 import { readTags } from './core/tags';
 import { cachedTags, editFrontmatter } from './frontmatter';
-
-/**
- * Whether this file is one the plugin looks after.
- *
- * The notes folder does two jobs: it is where new notes are made, and it is the
- * only place a mirror is ever written. That is what keeps the tag off notes
- * another plugin owns, such as a literature folder, where every note would
- * otherwise read as unfiled for ever because it answers no axis and never will.
- */
-export function inScope(path: string, notesFolder: string): boolean {
-	const folder = cleanFolder(notesFolder);
-	if (folder === '') return true;
-	return path.startsWith(`${folder}/`);
-}
 
 /** Whether the mirror is doing anything at all under these settings. */
 export function mirrorActive(settings: Settings): boolean {
@@ -37,7 +23,7 @@ export function mirrorActive(settings: Settings): boolean {
  * actually on disk, because the cache can be a moment behind.
  */
 export async function syncMirror(app: App, file: TFile, settings: Settings): Promise<boolean> {
-	if (!mirrorActive(settings) || !inScope(file.path, settings.notesFolder)) return false;
+	if (!mirrorActive(settings) || !inScope(file.path, settings)) return false;
 	const axes = activeAxes(settings);
 	const cached = readTags(cachedTags(app, file));
 	if (mirrorIsCurrent(axes, cached, settings.unfiledTag)) return false;
@@ -59,7 +45,7 @@ export async function sweepMirror(app: App, settings: Settings): Promise<number>
 	if (!mirrorActive(settings)) return 0;
 	let changed = 0;
 	for (const file of app.vault.getMarkdownFiles()) {
-		if (!inScope(file.path, settings.notesFolder)) continue;
+		if (!inScope(file.path, settings)) continue;
 		if (await syncMirror(app, file, settings)) changed += 1;
 	}
 	return changed;
@@ -69,5 +55,5 @@ export async function sweepMirror(app: App, settings: Settings): Promise<number>
 export function activeNote(app: App, settings: Settings): TFile | null {
 	const file = app.workspace.getActiveFile();
 	if (!(file instanceof TFile) || file.extension !== 'md') return null;
-	return inScope(file.path, settings.notesFolder) ? file : null;
+	return inScope(file.path, settings) ? file : null;
 }

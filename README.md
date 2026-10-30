@@ -78,8 +78,9 @@ Loose Ends only writes two things in a note: the tag you pick when it asks you
 a question, and the unfiled tag. Every other tag, every other property and
 every word you wrote stay as they are. It only ever writes in your notes
 folder, so notes that belong to something else, like a literature folder, are
-left alone. [Section 11](#11-network-and-file-disclosure) lists exactly what it
-writes and when.
+left alone. So are your templates, even when they're inside the notes folder.
+[Section 11](#11-network-and-file-disclosure) lists exactly what it writes and
+when.
 
 It doesn't connect to the internet and doesn't run any programs.
 
@@ -163,7 +164,8 @@ If you want to work on the plugin:
   Answer the last question and it's gone.
 - **Exact answers** - Only the values you listed count, so a typo or an old
   tag never quietly passes as filed.
-- **Only your notes** - Nothing outside your notes folder is ever tagged.
+- **Only your notes** - Nothing outside your notes folder is ever tagged, and
+  neither is anything in your template folder.
 
 <br/>
 
@@ -223,6 +225,10 @@ the only place Loose Ends ever adds the unfiled tag. If some of your notes
 belong to another plugin, like a folder of literature notes, pick a Notes folder
 that leaves them out. Those notes will never answer your axes, so they'd stay
 unfiled forever.
+
+Your template folder is always left out, even when it's inside the notes
+folder. A template isn't a note waiting to be filed, and a tag added to it
+would end up in every note you make from it.
 
 <br/>
 
@@ -339,7 +345,8 @@ doesn't send anything anywhere.
 
 ### 11.2 What it changes in your notes
 
-Only in notes in your notes folder, and only these:
+Only in notes in your notes folder, never in your template folder, and only
+these:
 
 - **Answers:** The tag you pick when it asks about an axis, in the note's
   `tags` property. Any other tag under that axis is replaced.
