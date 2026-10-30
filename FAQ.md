@@ -65,6 +65,15 @@ there wasn't one. Open a note in your notes folder and run the command again.
 To file a note without opening it, right-click it in the file explorer, or use
 the tag button on its row in the inbox block.
 
+### "Loose Ends didn't change this note's tags, because its tags property holds something that isn't a tag."
+
+Every entry in a note's `tags` property should be a plain tag, and one of them
+isn't. It might be a link, like `[[Project]]`, which Obsidian reads as a list
+inside the list, or a property typed into the list, like `- status: done`.
+Writing the tags back would lose that entry, so Loose Ends leaves them alone.
+Change it into a plain tag, or move it to a property of its own, and run the
+command again. Until then, the note doesn't get the unfiled tag either.
+
 ### "Loose Ends has no axes yet."
 
 You haven't told it what a note needs yet. Add an axis in Settings → Loose Ends

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readTags, withTag, withValue, withoutNamespace, withoutTag } from '../src/core/tags';
+import { canRewriteTags, readTags, withTag, withValue, withoutNamespace, withoutTag } from '../src/core/tags';
 
 describe('readTags', () => {
 	it('reads a list', () => {
@@ -15,8 +15,20 @@ describe('readTags', () => {
 		expect(readTags(['#domain/phd'])).toEqual(['domain/phd']);
 	});
 
-	it('drops blanks, duplicates and non-strings', () => {
-		expect(readTags(['domain/phd', '', 'domain/phd', 3, null])).toEqual(['domain/phd']);
+	it('drops blanks and duplicates', () => {
+		expect(readTags(['domain/phd', '', 'domain/phd', null])).toEqual(['domain/phd']);
+	});
+
+	// YAML reads `tags: [2024, project]` as a number and a string, and the list
+	// read here is the list written back.
+	it('keeps a number or a boolean, as the text it was written as', () => {
+		expect(readTags([2024, 'project'])).toEqual(['2024', 'project']);
+		expect(readTags([true, 'project'])).toEqual(['true', 'project']);
+		expect(readTags(2024)).toEqual(['2024']);
+	});
+
+	it('reads nothing off an entry that holds more than text', () => {
+		expect(readTags(['project', { status: 'done' }, ['link']])).toEqual(['project']);
 	});
 
 	it('reads a missing key as no tags', () => {
@@ -52,5 +64,23 @@ describe('withValue', () => {
 
 	it('clears a nested stray while answering', () => {
 		expect(withValue(['domain/phd/wp1'], 'domain', 'phd')).toEqual(['domain/phd']);
+	});
+});
+
+describe('canRewriteTags', () => {
+	it('is true for every shape readTags takes in whole', () => {
+		expect(canRewriteTags(undefined)).toBe(true);
+		expect(canRewriteTags(null)).toBe(true);
+		expect(canRewriteTags('domain/phd, project')).toBe(true);
+		expect(canRewriteTags(2024)).toBe(true);
+		expect(canRewriteTags(['domain/phd', 2024, true, null])).toBe(true);
+	});
+
+	// `- status: done` typed into the list, or `[[a link]]`, which YAML reads
+	// as a list inside the list. Writing the tags back would drop either.
+	it('is false when an entry holds more than text', () => {
+		expect(canRewriteTags(['project', { status: 'done' }])).toBe(false);
+		expect(canRewriteTags([['a link']])).toBe(false);
+		expect(canRewriteTags({ status: 'done' })).toBe(false);
 	});
 });

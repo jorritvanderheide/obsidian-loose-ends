@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isFiled, mirrorIsCurrent, missingAxes, withMirror } from '../src/core/filing';
+import { isFiled, mirrorIsCurrent, mirrorUpdate, missingAxes, withMirror } from '../src/core/filing';
 import type { Axis } from '../src/core/vocabulary';
 
 const domain: Axis = { namespace: 'domain', values: ['phd', 'vault', 'personal'] };
@@ -70,5 +70,54 @@ describe('mirrorIsCurrent', () => {
 
 	it('is always true when no mirror tag is set', () => {
 		expect(mirrorIsCurrent(axes, ['domain/phd'], '')).toBe(true);
+	});
+});
+
+describe('mirrorUpdate', () => {
+	// What the note is left with must be a note that is already right, or every
+	// metadata event after the write would write again.
+	function settles(value: unknown): void {
+		const written = mirrorUpdate(axes, value, UNFILED);
+		expect(written).not.toBeNull();
+		expect(mirrorUpdate(axes, written, UNFILED)).toBeNull();
+	}
+
+	it('writes nothing to a note that is already right', () => {
+		expect(mirrorUpdate(axes, ['domain/phd', UNFILED], UNFILED)).toBeNull();
+		expect(mirrorUpdate(axes, ['domain/phd', 'source/ai'], UNFILED)).toBeNull();
+		expect(mirrorUpdate(axes, 'domain/phd source/ai', UNFILED)).toBeNull();
+	});
+
+	// YAML reads `tags: [2024, project]` as a number and a string. The number
+	// used to be dropped, and the note left with only `project` and the mirror.
+	it('keeps a number in the list it writes', () => {
+		expect(mirrorUpdate(axes, [2024, 'project'], UNFILED)).toEqual(['2024', 'project', UNFILED]);
+		expect(mirrorUpdate(axes, 2024, UNFILED)).toEqual(['2024', UNFILED]);
+		settles([2024, 'project']);
+	});
+
+	it('keeps every tag in a comma or space separated string', () => {
+		expect(mirrorUpdate(axes, 'project 2024, domain/phd', UNFILED)).toEqual(['2024', 'domain/phd', 'project', UNFILED]);
+		settles('project 2024, domain/phd');
+	});
+
+	it('takes the mirror off a filed note and keeps the rest', () => {
+		expect(mirrorUpdate(axes, [2024, 'domain/phd', 'source/ai', UNFILED], UNFILED)).toEqual([
+			'2024',
+			'domain/phd',
+			'source/ai',
+		]);
+		settles([2024, 'domain/phd', 'source/ai', UNFILED]);
+	});
+
+	// Writing the list back would drop the entry it can't read as a tag.
+	it('leaves a note alone when an entry holds more than text', () => {
+		expect(mirrorUpdate(axes, ['project', { status: 'done' }], UNFILED)).toBeNull();
+		expect(mirrorUpdate(axes, [['a link']], UNFILED)).toBeNull();
+		expect(mirrorUpdate(axes, { status: 'done' }, UNFILED)).toBeNull();
+	});
+
+	it('writes nothing when no mirror tag is set', () => {
+		expect(mirrorUpdate(axes, [2024, 'project'], '')).toBeNull();
 	});
 });

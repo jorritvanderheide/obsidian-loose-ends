@@ -4,10 +4,9 @@
 // metadata listener would see its own write, decide again, and write again.
 
 import { TFile, type App } from 'obsidian';
-import { mirrorIsCurrent, withMirror } from './core/filing';
+import { mirrorUpdate } from './core/filing';
 import { inScope } from './core/scope';
 import { activeAxes, type Settings } from './core/settings';
-import { readTags } from './core/tags';
 import { cachedTags, editFrontmatter } from './frontmatter';
 
 /** Whether the mirror is doing anything at all under these settings. */
@@ -20,19 +19,19 @@ export function mirrorActive(settings: Settings): boolean {
  *
  * The check is made twice: once off the metadata cache to avoid opening a file
  * that is already right, and once inside `processFrontMatter` against what is
- * actually on disk, because the cache can be a moment behind.
+ * actually on disk, because the cache can be a moment behind. `mirrorUpdate`
+ * makes both, and also leaves alone a `tags` property it can't write back
+ * whole.
  */
 export async function syncMirror(app: App, file: TFile, settings: Settings): Promise<boolean> {
 	if (!mirrorActive(settings) || !inScope(file.path, settings)) return false;
 	const axes = activeAxes(settings);
-	const cached = readTags(cachedTags(app, file));
-	if (mirrorIsCurrent(axes, cached, settings.unfiledTag)) return false;
+	if (mirrorUpdate(axes, cachedTags(app, file), settings.unfiledTag) === null) return false;
 
 	let wrote = false;
 	await editFrontmatter(app, file, (frontmatter) => {
-		const tags = readTags(frontmatter.tags);
-		if (mirrorIsCurrent(axes, tags, settings.unfiledTag)) return;
-		const next = withMirror(axes, tags, settings.unfiledTag);
+		const next = mirrorUpdate(axes, frontmatter.tags, settings.unfiledTag);
+		if (next === null) return;
 		if (next.length === 0) delete frontmatter.tags;
 		else frontmatter.tags = next;
 		wrote = true;

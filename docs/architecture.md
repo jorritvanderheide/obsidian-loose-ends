@@ -66,6 +66,11 @@ flowchart TD
 3. **`mirrorIsCurrent` again inside `processFrontMatter`**, against what is on
    disk, because the cache can be a moment behind.
 
+`mirrorUpdate` in `core/filing.ts` makes checks 2 and 3. Besides
+`mirrorIsCurrent`, it leaves a note alone when its `tags` property holds an
+entry that isn't text (`canRewriteTags`), because the list it writes replaces
+the property, and that entry would be lost.
+
 After a write, the listener fires again, finds the tag current, and stops.
 
 **Every write of the unfiled tag goes through `mirrorIsCurrent` first.** A new

@@ -8,7 +8,7 @@ import type { Context } from '../context';
 import { missingAxes } from '../core/filing';
 import { activeAxes } from '../core/settings';
 import { byRecent, readRecent, rememberPick } from '../core/recent';
-import { readTags, withValue } from '../core/tags';
+import { canRewriteTags, readTags, withValue } from '../core/tags';
 import { cachedTags, editFrontmatter } from '../frontmatter';
 import { questionFor, type Axis } from '../core/vocabulary';
 import { activeNote, mirrorActive, syncMirror } from '../mirror';
@@ -23,14 +23,23 @@ function recentKey(axis: Axis): string {
 	return `loose-ends-recent-axis-${axis.namespace}`;
 }
 
+/** Said instead of writing, when an answer would cost an entry in the tags property. */
+const UNREADABLE_TAGS =
+	"Loose Ends didn't change this note's tags, because its tags property holds something that isn't a tag, like a nested list. Make every entry in it a plain tag, then try again.";
+
 /**
- * Ask for one axis, and write it. Returns false when the question was dismissed.
+ * Ask for one axis, and write it. Returns false when the question was
+ * dismissed, or when the tags property holds something writing it would lose.
  *
  * The question names the note when it is not the one open, because filing from
  * the inbox block asks about a note you cannot see, and a mis-click would
  * otherwise file the wrong one without a sign.
  */
 async function answer(context: Context, file: TFile, axis: Axis): Promise<boolean> {
+	if (!canRewriteTags(cachedTags(context.app, file))) {
+		new Notice(UNREADABLE_TAGS);
+		return false;
+	}
 	const question = questionFor(axis, readTags(cachedTags(context.app, file)));
 	const recent = readRecent(context.app.loadLocalStorage(recentKey(axis)));
 	const picked = await choose(
@@ -40,10 +49,15 @@ async function answer(context: Context, file: TFile, axis: Axis): Promise<boolea
 	);
 	if (picked === null) return false;
 	context.app.saveLocalStorage(recentKey(axis), rememberPick(recent, picked, axis.values));
+	// Checked again against the file, which the cache can be a moment behind.
+	let written = false;
 	await editFrontmatter(context.app, file, (frontmatter) => {
+		if (!canRewriteTags(frontmatter.tags)) return;
 		frontmatter.tags = withValue(readTags(frontmatter.tags), axis.namespace, picked);
+		written = true;
 	});
-	return true;
+	if (!written) new Notice(UNREADABLE_TAGS);
+	return written;
 }
 
 /**

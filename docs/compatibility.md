@@ -51,6 +51,10 @@ note, or writing in a template, is breaking.
   that way.
 - **The `tags` list** is written back as a list of tags without `#`, sorted
   ascending when a tag is added, because the Linter plugin sorts it on save.
+  A number or a boolean in it is written back as its text. A `tags` property
+  with an entry that holds more than text (an object, a list inside the list)
+  is never written (`canRewriteTags`), because writing it back would lose that
+  entry.
 - **What counts as filed** is read off the tags every time, and the sweep on
   startup rewrites the unfiled tag on every note in scope without a notice.
   So changing which tags answer an axis (exact comparison, see

@@ -358,7 +358,13 @@ When it adds a tag, it keeps the `tags` list sorted, the way the Linter plugin
 does. That way, if you use Linter, it has nothing to reorder the next time you
 save. Your tags themselves stay as they are, but the property is written back
 as a plain list. A comma or space separated string becomes a list, a leading
-`#` is dropped, and a tag that was there twice is kept once.
+`#` is dropped, and a tag that was there twice is kept once. A number like
+`2024` is kept, written as text.
+
+If the `tags` property holds something that isn't a tag, like a nested list,
+writing it back would lose that entry, so Loose Ends leaves the property as it
+is. The unfiled tag isn't added or taken off there, and **File note** and
+**Set** say why instead of writing your answer.
 
 ### 11.3 What it stores
 

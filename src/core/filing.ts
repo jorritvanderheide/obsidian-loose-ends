@@ -11,7 +11,7 @@
 // When the mirror and the note disagree the note wins and the mirror is
 // rewritten, never the other way round.
 
-import { withTag, withoutTag } from './tags';
+import { canRewriteTags, readTags, withTag, withoutTag } from './tags';
 import type { Axis } from './vocabulary';
 import { valueOf } from './vocabulary';
 
@@ -52,4 +52,19 @@ export function withMirror(axes: readonly Axis[], tags: readonly string[], unfil
 export function mirrorIsCurrent(axes: readonly Axis[], tags: readonly string[], unfiledTag: string): boolean {
 	if (unfiledTag === '') return true;
 	return tags.includes(unfiledTag) === !isFiled(axes, tags);
+}
+
+/**
+ * What to write in a note's `tags` to bring the mirror in line, or null to
+ * leave the note as it is.
+ *
+ * Takes the property as it stands, in whatever shape it was written, because
+ * the list returned replaces it: null when the mirror is already current, and
+ * null when the property holds something `readTags` can't take in, which
+ * writing the list back would lose.
+ */
+export function mirrorUpdate(axes: readonly Axis[], value: unknown, unfiledTag: string): string[] | null {
+	const tags = readTags(value);
+	if (mirrorIsCurrent(axes, tags, unfiledTag) || !canRewriteTags(value)) return null;
+	return withMirror(axes, tags, unfiledTag);
 }
