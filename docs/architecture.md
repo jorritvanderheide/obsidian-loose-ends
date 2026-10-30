@@ -103,11 +103,14 @@ through an untyped value. Read and write frontmatter through these two.
   in `mirrorKey` changed (the axes in effect, the unfiled tag, the notes folder
   or the template folder), through `sweepIfChanged`. Not on every keystroke
   while an axis or a folder is being typed.
-- quietly, when a sync brings settings saved on another device
-  (`onExternalSettingsChange`) and `mirrorKey` changed. The settings are
-  loaded into the same object, because the inbox blocks hold the one they
-  were drawn with. Without the reload, this device would go on tagging by the
-  old axes and undo what the other device wrote.
+Not when a sync brings settings saved on another device
+(`onExternalSettingsChange`). Those are loaded into the same object, because
+the inbox blocks hold the one they were drawn with, and `sweptFor` is set to
+them. Without the reload, this device would go on tagging by the old axes and
+undo what the other device wrote. The sweep is left to the device the change
+was made on, whose writes arrive by the same sync: settings are saved on every
+keystroke, and a sweep here could tag the vault with a half-typed tag or while
+the notes folder was briefly empty.
 
 ## Prompts
 

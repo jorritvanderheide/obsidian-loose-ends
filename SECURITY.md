@@ -18,8 +18,9 @@ made public.
 
 ## What counts
 
-Loose Ends creates the notes you ask it for, writes tags on the notes in your
-notes folder, and writes a starter template once. It connects to nothing and
+Loose Ends creates the notes you ask it for, and the notes folder and template
+folder when they aren't there yet. It writes tags on the notes in your notes
+folder, and a starter template once. It connects to nothing and
 runs no programs. See
 [section 11 of the README](README.md#11-network-and-file-disclosure). Anything
 that makes it connect somewhere, read or write files outside your vault, or run

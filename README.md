@@ -35,7 +35,7 @@ In Obsidian, go to Settings → Community plugins → Browse, search for
 "Loose Ends", and install and enable it. You can also find it on
 [its page in the plugin directory](https://community.obsidian.md/plugins/loose-ends).
 
-Loose Ends needs Obsidian 1.13 or later, and works on desktop and mobile.
+Loose Ends needs Obsidian 1.13.1 or later, and works on desktop and mobile.
 
 <br/>
 
@@ -200,8 +200,8 @@ folder in Tag Along. If it ever disagrees with your answers, your answers win.
 That's also why it's never out of date. If you delete the tag by hand, it comes
 back, and once you answer the last question, it goes. After you change the axes,
 a folder or the unfiled tag, every note in the notes folder is checked again
-when you close the settings. With Obsidian Sync, your other devices check
-again too, as soon as the new settings reach them.
+when you close the settings. With Obsidian Sync, your other devices take the
+new settings as soon as they arrive, along with the tags this check wrote.
 
 ### 6.3 Only the exact values count
 
@@ -374,6 +374,8 @@ is. The unfiled tag isn't added or taken off there, and **File note** and
 - **Starter template:** On a fresh install, `Default.md` in the template
   folder, unless a file with that name is already there. If you delete it, it
   isn't written again.
+- **Folders:** The notes folder when you add a note, and the template folder
+  for the starter template, when the folder isn't there yet.
 - **Settings:** Its own `data.json` in the plugin folder.
 - **Recent picks:** The order you last picked templates in, and the answers for
   each axis, so your usual choice comes first.

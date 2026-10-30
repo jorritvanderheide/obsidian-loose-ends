@@ -213,14 +213,19 @@ export default class LooseEndsPlugin extends Plugin {
 	 *
 	 * Loaded into the same object, because the inbox blocks hold the settings
 	 * they were drawn with.
+	 *
+	 * No sweep here. The device the change was made on sweeps when its settings
+	 * close, and those writes come in by the same sync. A setting is saved on
+	 * every keystroke, so sweeping here could tag the whole vault with a
+	 * half-typed tag, or every note while the notes folder was briefly empty,
+	 * and nothing takes an old tag off again.
 	 */
 	async onExternalSettingsChange(): Promise<void> {
 		const data: unknown = await this.loadData();
 		Object.assign(this.settings, loadSettings(data));
+		this.sweptFor = mirrorKey(this.settings);
 		await this.settingsChanged();
 		this.settingTab.update();
-		// Before the layout is ready, the sweep on startup is still to come.
-		if (this.app.workspace.layoutReady) await this.sweepIfChanged(true);
 	}
 
 	/** Bring everything that follows the settings in line with them. */

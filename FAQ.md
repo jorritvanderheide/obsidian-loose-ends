@@ -65,7 +65,7 @@ there wasn't one. Open a note in your notes folder and run the command again.
 To file a note without opening it, right-click it in the file explorer, or use
 the tag button on its row in the inbox block.
 
-### "Loose Ends didn't change this note's tags, because its tags property holds something that isn't a tag."
+### "Loose Ends didn't change this note's tags, because its tags property holds something that isn't a tag, like a nested list. …"
 
 Every entry in a note's `tags` property should be a plain tag, and one of them
 isn't. It might be a link, like `[[Project]]`, which Obsidian reads as a list
