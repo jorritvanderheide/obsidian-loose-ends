@@ -3,7 +3,7 @@
 What changed in each release of Loose Ends, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
-## Unreleased
+## 1.6.1
 
 - Loose Ends no longer adds the unfiled tag to your templates. With the notes folder left empty, it treated the template folder like any other, so each template got the tag and showed up in the inbox block as a note to file. The template folder is now always left out, even when it's inside the notes folder. If a template already has the tag, take it off once by hand, and it won't come back.
 - A number in a note's tags is no longer lost when Loose Ends writes the tags. With `tags: [2024, project]`, adding the unfiled tag or an answer used to drop the `2024`. The number is now kept, written as text.
